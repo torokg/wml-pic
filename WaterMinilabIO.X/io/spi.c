@@ -95,7 +95,11 @@ static void _spi1_tx_handler()
         if(GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN))
             SPI0_INT_Set();
     }
-    SPI1_CLEAR_TX_INT_FLAG();
+    else
+    {
+        SPI1_DISABLE_TX_INT();
+        SPI1_CLEAR_TX_INT_FLAG();
+    }
 }
 
 static void __attribute__((used)) SPI1_CS_Handler(GPIO_PIN pin, uintptr_t context)
