@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>com.microchip.mplab.nbide.embedded.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>WaterMinilabIO</name>
+            <creation-uuid>ee2052b5-6387-4b88-9956-5c5ceec8600f</creation-uuid>
+            <make-project-type>0</make-project-type>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>../src/third_party/rtos/threadx/posix</sourceRootElem>
+                <sourceRootElem>io</sourceRootElem>
+                <sourceRootElem>types</sourceRootElem>
+                <sourceRootElem>earpc</sourceRootElem>
+                <sourceRootElem>sched</sourceRootElem>
+                <sourceRootElem>../src/config/default/peripheral/spi</sourceRootElem>
+            </sourceRootList>
+            <confList>
+                <confElem>
+                    <name>default</name>
+                    <type>2</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>
