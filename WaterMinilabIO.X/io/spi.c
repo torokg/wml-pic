@@ -51,7 +51,7 @@ static int _spi1_read_fifo()
     return 1;
 }
 
-void _spi1_rx_handler()
+static void _spi1_rx_handler()
 {
     if(spi1_rxbuf.ptr)
     {
@@ -72,7 +72,7 @@ void _spi1_rx_handler()
 }
 
 
-void _spi1_tx_handler()
+static void _spi1_tx_handler()
 {
     if(spi1_txbuf.ptr)
     {
@@ -207,9 +207,9 @@ void SPI1_Initialize ( void )
     SPI1CONSET = _SPI1CON_ON_MASK;
 }
 
-int SPI1_Read(void *dest, int size)
+size_t SPI1_Read(void *dest, int size)
 {
-    int rv;
+    size_t rv;
     tx_semaphore_get(&sem_spi1_rx_api, TX_WAIT_FOREVER);
 
     SPI1_DISABLE_RX_INT();
@@ -227,9 +227,9 @@ int SPI1_Read(void *dest, int size)
     return rv;
 }
 
-int SPI1_Write(const void *src, int size)
+size_t SPI1_Write(const void *src, int size)
 {
-    int rv;
+    size_t rv;
     tx_semaphore_get(&sem_spi1_tx_api, TX_WAIT_FOREVER);
     
     spi1_txbuf.ptr = (void*)src;
@@ -240,7 +240,7 @@ int SPI1_Write(const void *src, int size)
     
     tx_semaphore_get(&sem_spi1_tx, TX_WAIT_FOREVER);
     
-    rv = spi1_rxbuf.index;
+    rv = spi1_txbuf.index;
     spi1_txbuf.index = 0;
     
     tx_semaphore_ceiling_put(&sem_spi1_tx_api,1);

@@ -10,6 +10,7 @@
             <file>file:/home/torokg/MPLABXProjects/src/config/default/peripheral/spi/spi_slave/plib_spi1_slave.h</file>
             <file>file:/home/torokg/MPLABXProjects/src/config/default/initialization.c</file>
             <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/posix/tx_posix.h</file>
+            <file>file:/home/torokg/MPLABXProjects/src/config/default/exceptions.c</file>
             <file>file:/home/torokg/MPLABXProjects/src/config/default/peripheral/spi/spi_slave/plib_spi1_slave.c</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/io/host/spi_pkt_slave.hh</file>
             <file>file:/home/torokg/MPLABXProjects/src/config/default/peripheral/gpio/plib_gpio.c</file>

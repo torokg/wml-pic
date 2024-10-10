@@ -19,17 +19,11 @@ static void hostio_process()
 {
     
     SPI1_Initialize();
-/*
+
     typedef
      spi_pkt_slave
        < &SPI1_Read
        , &SPI1_Write
-       , &SPI1_CallbackRegister
-       , &SPI1_ErrorGet
-       , &SPI1_IsBusy
-       , &SPI1_WriteComplete
-       , &hostio_clkrq_set
-       , &hostio_clkrq_clr
        , std::allocator
        >
     hostio_raw;
@@ -53,7 +47,7 @@ static void hostio_process()
     {
         __builtin_software_breakpoint();
     }
-    */
+    
     //default_earpc::init();
     
     uint8_t cnt = 0;
@@ -68,18 +62,16 @@ static void hostio_process()
         tx_byte_pool_info_get(&posix_heap_byte_pool, 0, &avail, 
                     0, 0, 
                     0, 0);
-        std::vector<uint8_t> x{0xaa,11,0x1,0x0,cnt,cnt,0,0,'H','e','l','l','o',0x55};
+        std::vector<uint8_t> x{0x1,0x0,cnt,cnt,0,0,'H','e','l','l','o'};
         if(avail < 100000)
             __builtin_software_breakpoint();
-		uint16_t &checksum = reinterpret_cast<uint16_t*>(x.data())[3];
+		uint16_t &checksum = reinterpret_cast<uint16_t*>(x.data())[2];
         checksum = 0;
 		checksum = ::net::algorithm::hton(net::algorithm::checksum_finish(
-			net::algorithm::checksum_add(x.data()+2,6)
+			net::algorithm::checksum_add(x.data(),6)
 		));
 
-        SPI1_Write(x.data(),x.size());
-        
-        //hostio_raw::send(0,x);
+        hostio_raw::send(0,x);
                 
         //std::unique_lock ul(lk);
         
@@ -93,7 +85,7 @@ static void hostio_process()
         //);
         
         //cv.wait(ul);
-        std::this_thread::sleep_for(10000ms);
+        std::this_thread::sleep_for(100ms);
     }
 }
 
