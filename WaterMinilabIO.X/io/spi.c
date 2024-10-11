@@ -43,6 +43,7 @@ static int _spi1_read_fifo()
     while (!(SPI1STAT & _SPI1STAT_SPIRBE_MASK))
     {
         uint32_t x = SPI1BUF;
+        
         if(spi1_rxbuf.index < spi1_rxbuf.size)
             spi1_rxbuf.ptr[spi1_rxbuf.index++] = (uint8_t)x;
         else
@@ -63,12 +64,10 @@ static void _spi1_rx_handler()
         }
     }
     
-    
     volatile uint32_t _tempu32;
     while (!(SPI1STAT & _SPI1STAT_SPIRBE_MASK))
         _tempu32 = SPI1BUF;
-    SPI1_CLEAR_RX_INT_FLAG();
-        
+    SPI1_CLEAR_RX_INT_FLAG();   
 }
 
 
@@ -109,12 +108,20 @@ static void __attribute__((used)) SPI1_CS_Handler(GPIO_PIN pin, uintptr_t contex
     
     else
     {
-        _spi1_read_fifo();
+        
+        
         SPI1_CLEAR_RX_INT_FLAG();
         if(spi1_rxbuf.ptr)
         {
+            _spi1_read_fifo();
             spi1_rxbuf.ptr = 0;
             tx_semaphore_ceiling_put(&sem_spi1_rx,1);
+        }
+        else
+        {
+            volatile int x;
+            while (!(SPI1STAT & _SPI1STAT_SPIRBE_MASK))
+            { x = SPI1BUF; }
         }
         if(spi1_txbuf.ptr)
         {
@@ -125,7 +132,6 @@ static void __attribute__((used)) SPI1_CS_Handler(GPIO_PIN pin, uintptr_t contex
         }
     }
 }
-
 
 void __ISR(_SPI1_FAULT_VECTOR, ipl1SAVEALL) SPI1_FAULT_Handler (void)
 {
