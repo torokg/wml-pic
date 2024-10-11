@@ -82,10 +82,7 @@ static void _spi1_tx_handler()
             else
             {
                 spi1_txbuf.ptr = 0;
-                if(spi1_rxbuf.ptr)
-                    SPI1CONCLR = 1<<(_SPI1CON_STXISEL_POSITION+1);
-                else
-                    SPI1_DISABLE_TX_INT();
+                SPI1_DISABLE_TX_INT();
                 SPI1_CLEAR_TX_INT_FLAG();
                 tx_semaphore_ceiling_put(&sem_spi1_tx,1);
                 if(GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN))
@@ -97,8 +94,6 @@ static void _spi1_tx_handler()
         if(GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN))
             SPI0_INT_Set();
     }
-    else if(spi1_rxbuf.ptr)
-        SPI1BUF = 0xff;
     else
         SPI1_DISABLE_TX_INT();
 
@@ -247,8 +242,6 @@ size_t SPI1_Write(const void *src, int size)
     spi1_txbuf.ptr = (void*)src;
     spi1_txbuf.size = size;
     spi1_txbuf.index = 0;
-    
-    SPI1CONSET = 1<<(_SPI1CON_STXISEL_POSITION+1);
     SPI1_ENABLE_TX_INT();
     
     tx_semaphore_get(&sem_spi1_tx, TX_WAIT_FOREVER);
