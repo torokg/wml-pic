@@ -96,13 +96,13 @@ class spi_pkt_slave
             uint8_t *rbp = rbuf;
             size_t size = tRead(rbp,max_packet_size);
 
-            while(size)
+            while(size >= calc_dgram_size(0))
             {
-                while(size && (*rbp != start_byte))
-                { ++rbp; --size; }
-
-                if(size < calc_dgram_size(0))
-                    break;
+                if(*rbp != start_byte)
+                {
+                    ++rbp; --size;
+                    continue;
+                }
 
                 spi_pkt_header_t *pkt = (spi_pkt_header_t*)rbp;
 
@@ -127,6 +127,7 @@ class spi_pkt_slave
                 tx_semaphore_get(&sem_incoming,TX_WAIT_FOREVER);
 
                 static_assert(max_incoming_packets > 0, "max_incoming_packets must be at least 1");
+                
                 while(incoming->size() >= max_incoming_packets)
                     incoming->pop_front();
 
