@@ -37,11 +37,11 @@ namespace process
 		typedef typename clock::time_point       time_point;
 
 
-		static std::mutex               queue_lock;
+		static std::mutex               &queue_lock;
 
-		static std::mutex               suspend_lock;
+		static std::mutex               &suspend_lock;
 
-		static std::condition_variable  suspend_cv;
+		static std::condition_variable  &suspend_cv;
 
 		constexpr static connection_type &conn = TEnv::conn;
 
@@ -129,11 +129,19 @@ namespace process
 		    >
 		  queue_type;
 
-		static queue_type               queue;
+		static queue_type               &queue;
 
 		static volatile bool            notified;
 
 	public:
+        static void init()
+        {
+            new(&queue_lock) std::mutex();
+            new(&suspend_lock) std::mutex();
+            new(&suspend_cv) std::condition_variable();
+            new(&queue) queue_type();
+        }
+        
 		static void start()
 		{
 			journal(journal::debug,"earpc.process.send") << "initializing" << journal::end;
@@ -143,6 +151,7 @@ namespace process
 			{
 				time_point ns = time_point::max();
 				
+                const auto t0 = clock::now();
 				queue_lock.lock();
 				for(auto &i : queue)
 				{
@@ -280,18 +289,18 @@ namespace process
 	};
 
 	template<typename e>
-	std::mutex send<e>::queue_lock;
+	std::mutex &send<e>::queue_lock = *(std::mutex*)malloc(sizeof(std::mutex));
 
 	template<typename e>
-	std::mutex send<e>::suspend_lock;
+	std::mutex &send<e>::suspend_lock = *(std::mutex*)malloc(sizeof(std::mutex));
 
 	template<typename e>
-	std::condition_variable send<e>::suspend_cv;
+	std::condition_variable &send<e>::suspend_cv = *(std::condition_variable*)malloc(sizeof(std::condition_variable));
 
 	template<typename e>
-	typename send<e>::queue_type send<e>::queue;
+	typename send<e>::queue_type &send<e>::queue = *(typename send<e>::queue_type*)malloc(sizeof(typename send<e>::queue_type));
 
 	template<typename e>
-	volatile bool send<e>::notified;
+	volatile bool send<e>::notified = false;
 }}
 #endif

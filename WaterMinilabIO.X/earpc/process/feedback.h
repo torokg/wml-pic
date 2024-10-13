@@ -51,17 +51,27 @@ namespace process
 		    >
 		  queue_type;
 
-		static std::mutex               queue_lock;
+		static std::mutex               &queue_lock;
 
-		static std::mutex               suspend_lock;
+		static std::mutex               &suspend_lock;
 
-		static std::condition_variable  suspend_cv;
+		static std::condition_variable  &suspend_cv;
 
-		static queue_type               queue;
+		static queue_type               &queue;
 
-		static header_type              packet;
+		static header_type              &packet;
 
 	public:
+        
+        static void init()
+        {
+            new(&queue_lock) std::mutex();
+            new(&suspend_lock) std::mutex();
+            new(&suspend_cv) std::condition_variable();
+            new(&queue) queue_type();
+            new(&packet) header_type();
+        }
+        
 		static void start()
 		{
 			journal(journal::debug,"earpc.process.feedback") <<
@@ -159,18 +169,18 @@ namespace process
 	};
 
 	template<typename e>
-	std::mutex feedback<e>::queue_lock;
+	std::mutex &feedback<e>::queue_lock = *(std::mutex*)malloc(sizeof(std::mutex));
 
 	template<typename e>
-	std::mutex feedback<e>::suspend_lock;
+	std::mutex &feedback<e>::suspend_lock = *(std::mutex*)malloc(sizeof(std::mutex));
 
 	template<typename e>
-	std::condition_variable feedback<e>::suspend_cv;
+	std::condition_variable &feedback<e>::suspend_cv = *(std::condition_variable*)malloc(sizeof(std::condition_variable));
 
 	template<typename e>
-	typename feedback<e>::queue_type feedback<e>::queue;
+	typename feedback<e>::queue_type &feedback<e>::queue = *(typename feedback<e>::queue_type*)malloc(sizeof(typename feedback<e>::queue_type));
 
 	template<typename e>
-	typename feedback<e>::header_type feedback<e>::packet;
+	typename feedback<e>::header_type &feedback<e>::packet = *(typename feedback<e>::header_type*)malloc(sizeof(typename feedback<e>::header_type));
 }}
 #endif

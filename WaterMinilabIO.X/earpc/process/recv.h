@@ -356,7 +356,7 @@ namespace process
 			// Process outgoing calls
 			buf_outgoing_call::lock();
 			auto ocall = buf_outgoing_call::find(h.call_id);
-			if(ocall != buf_outgoing_call::end())
+			if(ocall == buf_outgoing_call::end())
 				journal(journal::error,"earpc.call.outgoing") <<
 					"call id: " << std::hex << h.call_id <<
 					"; remote: " << ip <<
@@ -485,8 +485,8 @@ namespace process
 					
 				return;
 			}
-
-			const header_type &h = *reinterpret_cast<const header_type*>(buffer.data());
+            
+            const header_type &h = *reinterpret_cast<const header_type*>(buffer.data());
 
 			if(!h.checksum_verify())
 			{
@@ -622,13 +622,16 @@ namespace process
 				}
 			}
 		};
+        
+        static void init()
+        {}
 
 		static void start()
 		{
 			journal(journal::debug,"earpc.process.recv") << "initializing" << journal::end;
 			while(1)
 				process();
-		}
+    	}
 	};
 }}
 #endif

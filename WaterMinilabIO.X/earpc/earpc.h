@@ -366,6 +366,15 @@ namespace earpc
 
 		static void init()
 		{
+            env_buffers::buf_command::init();
+            buf_incoming_call::init();
+            buf_outgoing_call::init();
+            proc_callback::init();
+            proc_expiry::init();
+            proc_recv::init();
+            proc_send::init();
+            proc_feedback::init();
+            
 			master_process = new std::thread(start);
 
 #ifdef __linux__			
@@ -383,7 +392,7 @@ namespace earpc
 	};
 
 	template<typename c>
-	std::thread *earpc<c>::master_process;
+	std::thread *earpc<c>::master_process = 0;
 
 	template<typename c>
 	void earpc<c>::outgoing_call_rerouted(address_type old_ip, address_type new_ip)

@@ -32,11 +32,18 @@ namespace earpc::process
 		typedef typename TEnv::proc_callback     proc_callback;
 
 
-		static std::mutex                        suspend_lock;
+		static std::mutex                        &suspend_lock;
 
-		static std::condition_variable           suspend_cv;
+		static std::condition_variable           &suspend_cv;
 
 	public:
+        
+        static void init()
+        {
+            new(&suspend_lock) std::mutex();
+            new(&suspend_cv) std::condition_variable();
+        }
+        
 		static void start()
 		{
 			journal(journal::debug,"earpc.process.expiry") << "initializing" << journal::end;
@@ -138,9 +145,9 @@ namespace earpc::process
 	};
 
 	template<typename e>
-	std::mutex expiry<e>::suspend_lock;
+	std::mutex &expiry<e>::suspend_lock = *(std::mutex*)malloc(sizeof(std::mutex));
 
 	template<typename e>
-	std::condition_variable expiry<e>::suspend_cv;
+	std::condition_variable &expiry<e>::suspend_cv = *(std::condition_variable*)malloc(sizeof(std::condition_variable));
 }
 #endif

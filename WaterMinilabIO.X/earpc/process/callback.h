@@ -23,7 +23,7 @@ class callback
 	    >
 	  buffer_type;
 
-	static buffer_type buffer;
+	static buffer_type &buffer;
 
 	class callback_process : public sched::process
 	{
@@ -84,7 +84,7 @@ class callback
 	    >
 	  processes_type;
 
-	static processes_type processes;
+	static processes_type &processes;
 
 	constexpr static uint16_t max_callback_threads = 4;
 
@@ -94,6 +94,10 @@ public:
 		journal(journal::trace,"earpc.process.callback") <<
 			"initializing service with 4 workers" <<
 			journal::end;
+        
+        new(&buffer) buffer_type();
+        new(&processes) processes_type();
+        
 		processes.lock();
 		for(int c = 0; c < 4; ++c)
 		{
@@ -165,10 +169,10 @@ public:
 };
 
 template<typename e>
-typename callback<e>::buffer_type callback<e>::buffer;
+typename callback<e>::buffer_type &callback<e>::buffer = *(typename callback<e>::buffer_type*)malloc(sizeof(typename callback<e>::buffer_type));
 
 template<typename e>
-typename callback<e>::processes_type callback<e>::processes;
+typename callback<e>::processes_type &callback<e>::processes = *(typename callback<e>::processes_type*)malloc(sizeof(typename callback<e>::processes_type));
 
 }
 #endif

@@ -31,13 +31,19 @@ namespace buffer
 		  container_type;
 
 	private:
-		static container_type                       container;
+		static container_type                       &container;
 
-		static std::mutex                           mutex;
+		static std::mutex                           &mutex;
 
 	public:
 		typedef typename container_type::iterator   iterator;
 
+        static void init()
+        {
+            new(&container) container_type();
+            new(&mutex) std::mutex();
+        }
+        
 		static void lock()
 		{ mutex.lock(); }
 
@@ -76,9 +82,9 @@ namespace buffer
 	};
 
 	template<typename e,typename r>
-	typename buffer<e,r>::container_type buffer<e,r>::container;
+	typename buffer<e,r>::container_type &buffer<e,r>::container = *(typename buffer<e,r>::container_type*)malloc(sizeof(typename buffer<e,r>::container_type));
 
 	template<typename e,typename r>
-	std::mutex buffer<e,r>::mutex;
+	std::mutex &buffer<e,r>::mutex = *(std::mutex*)malloc(sizeof(std::mutex));
 }}}
 #endif
