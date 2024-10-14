@@ -33,8 +33,10 @@ static void hostio_process()
         
         if(t >= t0)
         {
+	     ULONG avail = 0;
+	     tx_byte_pool_info_get(&posix_heap_byte_pool, 0, &avail, 0, 0, 0, 0);
             std::stringstream ss;
-            ss << "Clock: " << ::types::time::fsec(t.time_since_epoch());
+            ss << "Clock: " << ::types::time::fsec(t.time_since_epoch()) << "; memory: " << avail << " bytes available";
             default_earpc::call<bool,std::string>(
                 0,0x1,ss.str(),
                 [](auto r){

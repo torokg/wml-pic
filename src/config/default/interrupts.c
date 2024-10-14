@@ -69,7 +69,24 @@
 void SPI1_FAULT_Handler (void);
 void SPI1_RX_Handler (void);
 void SPI1_TX_Handler (void);
-void SPI1_CS_InterruptHandler(void);
+void UART1_FAULT_Handler (void);
+void UART1_RX_Handler (void);
+void UART1_TX_Handler (void);
+void UART2_FAULT_Handler (void);
+void UART2_RX_Handler (void);
+void UART2_TX_Handler (void);
+void UART3_FAULT_Handler (void);
+void UART3_RX_Handler (void);
+void UART3_TX_Handler (void);
+void UART4_FAULT_Handler (void);
+void UART4_RX_Handler (void);
+void UART4_TX_Handler (void);
+void UART5_FAULT_Handler (void);
+void UART5_RX_Handler (void);
+void UART5_TX_Handler (void);
+void UART6_FAULT_Handler (void);
+void UART6_RX_Handler (void);
+void UART6_TX_Handler (void);
 void CHANGE_NOTICE_A_Handler (void);
 void CHANGE_NOTICE_C_Handler (void);
 void CHANGE_NOTICE_D_Handler (void);
@@ -78,42 +95,151 @@ void CHANGE_NOTICE_H_Handler (void);
 void CHANGE_NOTICE_J_Handler (void);
 void CHANGE_NOTICE_K_Handler (void);
 
-
 // *****************************************************************************
 // *****************************************************************************
 // Section: System Interrupt Vector definitions
 // *****************************************************************************
 // *****************************************************************************
 
-/*void __ISR(_SPI1_FAULT_VECTOR, ipl1SRS) SPI1_FAULT_Handler (void)
-{
-    SPI1_FAULT_InterruptHandler();
-}
 
-void __ISR(_SPI1_RX_VECTOR, ipl1AUTO) SPI1_RX_Handler (void)
+void __ISR(_UART1_FAULT_VECTOR, ipl1SAVEALL) UART1_FAULT_Handler (void)
 {
     _tx_thread_context_save();
-    SPI1_RX_InterruptHandler();
+    UART1_FAULT_InterruptHandler();
     _tx_thread_context_restore();
 }
 
-void __ISR(_SPI1_TX_VECTOR, ipl1AUTO) SPI1_TX_Handler (void)
+void __ISR(_UART1_RX_VECTOR, ipl1SAVEALL) UART1_RX_Handler (void)
 {
     _tx_thread_context_save();
-    SPI1_TX_InterruptHandler();
+    UART1_RX_InterruptHandler();
     _tx_thread_context_restore();
 }
-*/
 
-
-void __ISR(_CHANGE_NOTICE_A_VECTOR, ipl1SRS) CHANGE_NOTICE_A_Handler (void)
+void __ISR(_UART1_TX_VECTOR, ipl1SAVEALL) UART1_TX_Handler (void)
 {
+    _tx_thread_context_save();
+    UART1_TX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART2_FAULT_VECTOR, ipl1SAVEALL) UART2_FAULT_Handler (void)
+{
+    _tx_thread_context_save();
+    UART2_FAULT_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART2_RX_VECTOR, ipl1SAVEALL) UART2_RX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART2_RX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART2_TX_VECTOR, ipl1SAVEALL) UART2_TX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART2_TX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART3_FAULT_VECTOR, ipl1SAVEALL) UART3_FAULT_Handler (void)
+{
+    _tx_thread_context_save();
+    UART3_FAULT_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART3_RX_VECTOR, ipl1SAVEALL) UART3_RX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART3_RX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART3_TX_VECTOR, ipl1SAVEALL) UART3_TX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART3_TX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART4_FAULT_VECTOR, ipl1SAVEALL) UART4_FAULT_Handler (void)
+{
+    _tx_thread_context_save();
+    UART4_FAULT_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART4_RX_VECTOR, ipl1SAVEALL) UART4_RX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART4_RX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART4_TX_VECTOR, ipl1SAVEALL) UART4_TX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART4_TX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART5_FAULT_VECTOR, ipl1SAVEALL) UART5_FAULT_Handler (void)
+{
+    _tx_thread_context_save();
+    UART5_FAULT_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART5_RX_VECTOR, ipl1SAVEALL) UART5_RX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART5_RX_InterruptHandler();
+    _tx_thread_context_restore();    
+}
+
+void __ISR(_UART5_TX_VECTOR, ipl1SAVEALL) UART5_TX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART5_TX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART6_FAULT_VECTOR, ipl1SAVEALL) UART6_FAULT_Handler (void)
+{
+    _tx_thread_context_save();
+    UART6_FAULT_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART6_RX_VECTOR, ipl1SAVEALL) UART6_RX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART6_RX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_UART6_TX_VECTOR, ipl1SAVEALL) UART6_TX_Handler (void)
+{
+    _tx_thread_context_save();
+    UART6_TX_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_CHANGE_NOTICE_A_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_A_Handler (void)
+{
+    _tx_thread_context_save();
     CHANGE_NOTICE_A_InterruptHandler();
+    _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_C_VECTOR, ipl1SRS) CHANGE_NOTICE_C_Handler (void)
+void __ISR(_CHANGE_NOTICE_C_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_C_Handler (void)
 {
+    _tx_thread_context_save();
     CHANGE_NOTICE_C_InterruptHandler();
+    _tx_thread_context_restore();
 }
 
 void __ISR(_CHANGE_NOTICE_D_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_D_Handler (void)
@@ -123,14 +249,18 @@ void __ISR(_CHANGE_NOTICE_D_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_D_Handler (void)
     _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_G_VECTOR, ipl1SRS) CHANGE_NOTICE_G_Handler (void)
+void __ISR(_CHANGE_NOTICE_G_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_G_Handler (void)
 {
+    _tx_thread_context_save();
     CHANGE_NOTICE_G_InterruptHandler();
+    _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_H_VECTOR, ipl1SRS) CHANGE_NOTICE_H_Handler (void)
+void __ISR(_CHANGE_NOTICE_H_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_H_Handler (void)
 {
+    _tx_thread_context_save();
     CHANGE_NOTICE_H_InterruptHandler();
+    _tx_thread_context_restore();
 }
 
 void __ISR(_CHANGE_NOTICE_J_VECTOR, ipl1SRS) CHANGE_NOTICE_J_Handler (void)
@@ -142,6 +272,7 @@ void __ISR(_CHANGE_NOTICE_K_VECTOR, ipl1SRS) CHANGE_NOTICE_K_Handler (void)
 {
     CHANGE_NOTICE_K_InterruptHandler();
 }
+
 
 
 

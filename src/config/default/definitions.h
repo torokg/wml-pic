@@ -48,6 +48,10 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include "peripheral/uart/plib_uart3.h"
+#include "peripheral/uart/plib_uart4.h"
+#include "peripheral/uart/plib_uart1.h"
+#include "peripheral/uart/plib_uart2.h"
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
@@ -55,6 +59,8 @@
 #include "tx_user.h"
 #include "tx_api.h"
 #include "tx_tmr1.h"
+#include "peripheral/uart/plib_uart5.h"
+#include "peripheral/uart/plib_uart6.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

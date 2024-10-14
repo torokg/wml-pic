@@ -57,9 +57,13 @@
 // *****************************************************************************
 // *****************************************************************************
 
+void TIMER_1_InterruptHandler( void );
 void SPI1_FAULT_InterruptHandler( void );
 void SPI1_RX_InterruptHandler( void );
 void SPI1_TX_InterruptHandler( void );
+void UART1_FAULT_InterruptHandler( void );
+void UART1_RX_InterruptHandler( void );
+void UART1_TX_InterruptHandler( void );
 void CHANGE_NOTICE_A_InterruptHandler( void );
 void CHANGE_NOTICE_C_InterruptHandler( void );
 void CHANGE_NOTICE_D_InterruptHandler( void );
@@ -67,6 +71,21 @@ void CHANGE_NOTICE_G_InterruptHandler( void );
 void CHANGE_NOTICE_H_InterruptHandler( void );
 void CHANGE_NOTICE_J_InterruptHandler( void );
 void CHANGE_NOTICE_K_InterruptHandler( void );
+void UART2_FAULT_InterruptHandler( void );
+void UART2_RX_InterruptHandler( void );
+void UART2_TX_InterruptHandler( void );
+void UART3_FAULT_InterruptHandler( void );
+void UART3_RX_InterruptHandler( void );
+void UART3_TX_InterruptHandler( void );
+void UART4_FAULT_InterruptHandler( void );
+void UART4_RX_InterruptHandler( void );
+void UART4_TX_InterruptHandler( void );
+void UART5_FAULT_InterruptHandler( void );
+void UART5_RX_InterruptHandler( void );
+void UART5_TX_InterruptHandler( void );
+void UART6_FAULT_InterruptHandler( void );
+void UART6_RX_InterruptHandler( void );
+void UART6_TX_InterruptHandler( void );
 
 
 

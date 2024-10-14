@@ -125,7 +125,7 @@ extern "C"
 /*        for all pthread stacks, pthread control blocks in the system  */
 
 #define  TX_DEFAULT_THREAD_STACK_SIZE   4096
-#define  TX_REGION0_CONSTANT            24
+#define  TX_REGION0_CONSTANT            25
 #define  TX_REGION0_SIZE                ( (TX_DEFAULT_THREAD_STACK_SIZE+16) * TX_REGION0_CONSTANT)
 
 #define  POSIX_HEAP_SIZE_IN_BYTES       (TX_REGION0_SIZE * 4)

@@ -17,6 +17,8 @@
                 <sourceRootElem>../src/config/default/peripheral/spi</sourceRootElem>
                 <sourceRootElem>drivers</sourceRootElem>
                 <sourceRootElem>net</sourceRootElem>
+                <sourceRootElem>../src/config/default/peripheral/uart</sourceRootElem>
+                <sourceRootElem>dev</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
