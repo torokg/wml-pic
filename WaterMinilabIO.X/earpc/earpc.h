@@ -246,7 +246,7 @@ namespace earpc
 		static void
 		set_command(
 			command_id_type id,
-			void(*callback)(incoming_call_handle<Treturn,Targ>)
+			std::function<void(incoming_call_handle<Treturn,Targ>)> callback
 		)
 		{
 			env_recv::buf_command::lock();
@@ -254,7 +254,7 @@ namespace earpc
 				id,
 				std::is_same<std::decay_t<Targ>,std::string>::value ? 0xffff : sizeof(Targ),
 				std::is_same<std::decay_t<Treturn>,std::string>::value ? 0xffff : sizeof(Treturn),
-				reinterpret_cast<typename env_recv::buf_command::callback_type>(callback)
+				*reinterpret_cast<typename env_recv::buf_command::callback_type*>(&callback)
 			);
 			env_recv::buf_command::unlock();
 		}
@@ -271,7 +271,7 @@ namespace earpc
 			address_type ip,
 			command_id_type cmd,
 			const Targ &arg,
-			void(*c)(outgoing_call_handle<Treturn,Targ>)
+			std::function<void(outgoing_call_handle<Treturn,Targ>)> c
 		)
 		{
 			std::vector<uint8_t,allocator<uint8_t>> argv;
@@ -288,7 +288,7 @@ namespace earpc
 			return do_call(
 				ip,cmd,argv,
 				serializer<Treturn>::size(),
-				reinterpret_cast<typename buf_outgoing_call::callback_type>(c)
+				*reinterpret_cast<std::function<void(outgoing_call_handle_base)>*>(&c)
 			);
 		}
 

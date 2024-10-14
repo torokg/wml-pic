@@ -127,7 +127,7 @@ public:
 	}
 
 	template<typename T>
-	static void notify(void(*fn)(T), T t)
+	static void notify(std::function<void(T)> fn, T t)
 	{
 		journal(journal::trace,"earpc.process.callback") <<
 			"adding new item to queue" <<

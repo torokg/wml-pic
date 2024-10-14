@@ -16,6 +16,7 @@
                 <sourceRootElem>sched</sourceRootElem>
                 <sourceRootElem>../src/config/default/peripheral/spi</sourceRootElem>
                 <sourceRootElem>drivers</sourceRootElem>
+                <sourceRootElem>net</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

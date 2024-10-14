@@ -3,39 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/common/src/tx_thread_shell_entry.c</file>
-            <file>file:/opt/microchip/xc32/v4.45/pic32mx/include/c++/8.3.1/bits/invoke.h</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/init.cc</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/config.h</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/process/feedback.h</file>
-            <file>file:/opt/microchip/xc32/v4.45/pic32mx/include/c++/8.3.1/bits/alloc_traits.h</file>
-            <file>file:/home/torokg/MPLABXProjects/src/config/default/initialization.c</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/io/spi.c</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/buffer/incoming_call.h</file>
-            <file>file:/opt/microchip/xc32/v4.45/pic32mx/include/c++/8.3.1/bits/allocator.h</file>
-            <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/posix/px_mx_lock.c</file>
-            <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/common/src/tx_byte_pool_search.c</file>
-            <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/posix/tx_posix.h</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/sched/process.cc</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/io/host/spi_pkt_slave.hh</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/process/send.h</file>
-            <file>file:/opt/microchip/xc32/v4.45/pic32mx/include/c++/8.3.1/condition_variable</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/thread_extra.cc</file>
-            <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/common/inc/tx_api.h</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/buffer/outgoing_call.h</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/process/callback.h</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/types/call_record.h</file>
-            <file>file:/opt/microchip/xc32/v4.45/pic32mx/include/c++/8.3.1/ext/aligned_buffer.h</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/process/callback.h</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/buffer/buffer.h</file>
-            <file>file:/home/torokg/MPLABXProjects/src/third_party/rtos/threadx/posix/time_extra.cc</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/process/recv.h</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/journal.hh</file>
-            <file>file:/home/torokg/MPLABXProjects/src/config/default/interrupts.c</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/types/call_handle.h</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/io/host/service.cc</file>
-            <file>file:/opt/microchip/xc32/v4.45/pic32mx/include/c++/8.3.1/chrono</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/process/expiry.h</file>
-            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/sched/process.hh</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/io/host/service.hh</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/net/algorithm.cc</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/drivers/TMC2209/TMC2209.cpp</file>
             <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/earpc/earpc.h</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/net/algorithm.h</file>
+            <file>file:/home/torokg/MPLABXProjects/WaterMinilabIO.X/drivers/TMC2209.h</file>
         </group>
     </open-files>
 </project-private>

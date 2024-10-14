@@ -4,6 +4,8 @@
 # include <cstdint>
 # include <chrono>
 # include <algorithm>
+# include <functional>
+
 #ifdef min
 # undef min
 #endif
@@ -98,7 +100,7 @@ struct incoming_call_record : public call_record<TEnv>
 {
 	typedef incoming_call_handle<TEnv>               incoming_call_handle_base;
 
-	typedef void (*callback_type)(incoming_call_handle_base&);
+	typedef std::function<void(incoming_call_handle_base&)> callback_type;
 
 
 	template<typename... Targs>
@@ -120,7 +122,7 @@ struct outgoing_call_record : public call_record<TEnv>
 	typedef typename TEnv::clock                     clock;
 	typedef typename TEnv::time_point                time_point;
 
-	typedef void (*callback_type)(outgoing_call_handle_base);
+	typedef std::function<void(outgoing_call_handle_base)> callback_type;
 
 	callback_type     callback;
 

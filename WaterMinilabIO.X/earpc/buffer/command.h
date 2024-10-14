@@ -3,6 +3,7 @@
 # include <list>
 # include <chrono>
 # include <mutex>
+# include <functional>
 namespace wic {
 namespace earpc {
 namespace buffer
@@ -24,7 +25,7 @@ namespace buffer
 		using allocator = typename TEnv::template allocator<T>;
 
 	public:
-		typedef void (*callback_type)(incoming_call_handle_base);
+		typedef std::function<void(incoming_call_handle_base)> callback_type;
 
 		struct record_type
 		{

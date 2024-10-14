@@ -149,6 +149,12 @@
         </logicalFolder>
         <itemPath>io/spi.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="net" displayName="net" projectFiles="true">
+        <itemPath>net/algorithm.h</itemPath>
+        <itemPath>net/mac_address.h</itemPath>
+        <itemPath>net/ipv4_address.h</itemPath>
+        <itemPath>net/algorithm.cc</itemPath>
+      </logicalFolder>
       <logicalFolder name="sched" displayName="sched" projectFiles="true">
         <itemPath>sched/process.hh</itemPath>
         <itemPath>sched/lockable.hh</itemPath>
@@ -517,6 +523,7 @@
     <Elem>sched</Elem>
     <Elem>../src/config/default/peripheral/spi</Elem>
     <Elem>drivers</Elem>
+    <Elem>net</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

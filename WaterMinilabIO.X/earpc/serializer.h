@@ -55,7 +55,7 @@ bool serializer<std::string>::deserialize(std::string &t, const std::vector<uint
 }
 
 template<>
-uint16_t serializer<std::string>::size()
+inline uint16_t serializer<std::string>::size()
 { return 0xffff; }
 
 }
