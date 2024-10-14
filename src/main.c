@@ -60,7 +60,7 @@ void tx_application_define(void *first_unused_memory)
     /* Allocate the stack for the main thread  */
     tx_byte_allocate(&stack_pool, (VOID **) &main_thread_stack, main_thread_stack_size, TX_NO_WAIT);
     
-    if(tx_thread_create(&main_thread, "main_thread", _Z4initv, 0, main_thread_stack, main_thread_stack_size, 1, 1, TX_NO_TIME_SLICE, TX_AUTO_START) != TX_SUCCESS)
+    if(tx_thread_create(&main_thread, "main_thread", _Z4initv, 0, main_thread_stack, main_thread_stack_size, 7, 1, TX_NO_TIME_SLICE, TX_AUTO_START) != TX_SUCCESS)
     {
         while(true)
             __builtin_software_breakpoint();

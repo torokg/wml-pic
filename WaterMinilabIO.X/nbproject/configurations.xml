@@ -111,6 +111,12 @@
           <itemPath>../src/config/default/initialization.c</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+        <logicalFolder name="TMC2209" displayName="TMC2209" projectFiles="true">
+          <itemPath>drivers/TMC2209/TMC2209.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>drivers/TMC2209.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="earpc" displayName="earpc" projectFiles="true">
         <logicalFolder name="buffer" displayName="buffer" projectFiles="true">
           <itemPath>earpc/buffer/command.h</itemPath>
@@ -146,7 +152,8 @@
       <logicalFolder name="sched" displayName="sched" projectFiles="true">
         <itemPath>sched/process.hh</itemPath>
         <itemPath>sched/lockable.hh</itemPath>
-        <itemPath>sched/process.cpp</itemPath>
+        <itemPath>sched/relay.hh</itemPath>
+        <itemPath>sched/process.cc</itemPath>
       </logicalFolder>
       <logicalFolder name="threadx" displayName="threadx" projectFiles="true">
         <logicalFolder name="common" displayName="common" projectFiles="true">
@@ -509,6 +516,7 @@
     <Elem>earpc</Elem>
     <Elem>sched</Elem>
     <Elem>../src/config/default/peripheral/spi</Elem>
+    <Elem>drivers</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -631,7 +639,7 @@
         <property key="generate-16-bit-code" value="false"/>
         <property key="generate-cross-reference-file" value="false"/>
         <property key="generate-micro-compressed-code" value="false"/>
-        <property key="heap-size" value="4096"/>
+        <property key="heap-size" value="512"/>
         <property key="input-libraries" value=""/>
         <property key="kseg-length" value=""/>
         <property key="kseg-origin" value=""/>
@@ -776,6 +784,7 @@
         <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>

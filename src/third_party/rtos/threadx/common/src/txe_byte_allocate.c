@@ -200,13 +200,9 @@ TX_THREAD       *thread_ptr;
     {
         /* Call actual byte memory allocate function.  */
         status =  _tx_byte_allocate(pool_ptr, memory_ptr, memory_size,  wait_option);
-        if(status)
-            __builtin_software_breakpoint();
     }
 
     /* Return completion status.  */
-    if(status)
-        __builtin_software_breakpoint();
-    return(0);
+    return(status);
 }
 

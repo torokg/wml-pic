@@ -2784,7 +2784,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;ThreadX&gt;
   &lt;ThreadX dnOrder=&quot;0&quot; id=&quot;THREADX_TX_DISABLE_ERROR_CHECKING&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
     &lt;/Values&gt;
   &lt;/ThreadX&gt;
 &lt;/ThreadX&gt;
@@ -2842,7 +2842,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;ThreadX&gt;
   &lt;ThreadX dnOrder=&quot;0&quot; id=&quot;THREADX_TX_ENABLE_STACK_CHECKING&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/ThreadX&gt;
 &lt;/ThreadX&gt;
@@ -2898,7 +2898,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;ThreadX&gt;
   &lt;ThreadX dnOrder=&quot;0&quot; id=&quot;THREADX_TX_NOT_INTERRUPTABLE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;User dnOrder=&quot;0&quot; value=&quot;true&quot;/&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;false&quot;/&gt;
     &lt;/Values&gt;
   &lt;/ThreadX&gt;
 &lt;/ThreadX&gt;
@@ -11317,11 +11317,11 @@
       </entry>
       <entry>
          <file>../src/config/default/interrupts.c</file>
-         <hash>c7aabc3cea5e65be7653074dd7f3cec963f68f8c1e77104380e670fdc80e3678</hash>
+         <hash>a2688aac0ca50c25decb294d223a46743ea1b0a762a21a8f7d04a59e4401db05</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.h</file>
-         <hash>1b49ee03e8f8d4f550987505f1252b7a116c14ca28e4cead8beb441f7b2ad16c</hash>
+         <hash>500e141ac21844783b4dc66d434e58040d049df9243d9b19e4457e1e98c7629c</hash>
       </entry>
       <entry>
          <file>../src/config/default/p32MZ2048EFM144.ld</file>
@@ -11377,7 +11377,7 @@
       </entry>
       <entry>
          <file>../src/config/default/threadx_config/tx_user.h</file>
-         <hash>60297a2646425ec3b2b1c448aa566af1d06cba0582e2c8f605142d28367bb836</hash>
+         <hash>289a60555061f92a48ee4ad4f54ceebf1ae31f2f6f5a7033b9205383d006c313</hash>
       </entry>
       <entry>
          <file>../src/config/default/toolchain_specifics.h</file>

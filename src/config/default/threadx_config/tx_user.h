@@ -105,9 +105,7 @@
 #define TX_TICK_RATE_HZ                         1000
 #define TX_TICK_PERIOD_MS                       (1000 / TX_TICK_RATE_HZ)
 
-/*
 #define TX_DISABLE_ERROR_CHECKING
-*/
 
 /* Determine if there is a FileX pointer in the thread control block.
    By default, the pointer is there for legacy/backwards compatibility. 
@@ -154,7 +152,9 @@
    define is negated, thereby forcing the stack fill which is necessary for the stack checking
    logic.  */
 
+/*
 #define TX_ENABLE_STACK_CHECKING
+*/
 
 /* Determine if preemption-threshold should be disabled. By default, preemption-threshold is
    enabled. If the application does not use preemption-threshold, it may be disabled to reduce
@@ -203,7 +203,9 @@
 /* Determine if the internal ThreadX code is non-interruptable. This results in smaller code
    size and less processing overhead, but increases the interrupt lockout time.  */
 
+/*
 #define TX_NOT_INTERRUPTABLE
+*/
 
 
 /* Determine if the trace event logging code should be enabled. This causes slight increases in

@@ -13,13 +13,16 @@ static bool _alloc_ready = false;
 extern "C" void alloc_initialize()
 { _alloc_ready = true; }
 
+static constexpr size_t _overalloc = 0;
+
 static inline void *_alloc(std::size_t count)
 {
     if(!_alloc_ready)
         __builtin_software_breakpoint();
     
     void *rv = 0;
-    posix_memory_allocate(count, &rv);
+    posix_memory_allocate(count+_overalloc, &rv);
+    rv += _overalloc/2;
     return rv;
 }
 
@@ -27,10 +30,11 @@ static inline void _free(void *ptr)
 {
     if(!_alloc_ready)
         __builtin_software_breakpoint();
+    ptr -= _overalloc/2;
     posix_memory_release(ptr);
 }
 
-constexpr size_t _malloc_buffer_size = 4096;
+constexpr size_t _malloc_buffer_size = 8192;
 static long _malloc_buffer[_malloc_buffer_size];
 static volatile long _malloc_ptr = 0;
 

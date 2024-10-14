@@ -54,6 +54,19 @@ thread::join()
 }
 
 
+void
+thread::detach()
+{
+  int __e = EINVAL;
+
+  if (_M_id != id())
+    __e = __gthread_detach(_M_id._M_thread);
+
+  if (__e)
+    __throw_system_error(__e);
+
+  _M_id = id();
+}
 
 
 void

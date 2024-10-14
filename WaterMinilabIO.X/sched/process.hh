@@ -1,16 +1,24 @@
 #ifndef SCHED_PROCESS_H
 # define SCHED_PROCESS_H
+# include <thread>
+# include <mutex>
 # include <chrono>
 # include <string>
-# include <stdexcept>
-# include <cstdint>
+# include "relay.hh"
 namespace sched
 {
 
+struct process_abortion : public std::exception {};
+
 class process
 {
-    volatile uint8_t _state:2;
-    volatile uint8_t _notified:1;
+	std::thread *volatile _thread;
+
+	std::mutex _lk;
+
+	sched::relay _relay;
+
+	inline void _run();
 
 	virtual void init();
 
@@ -28,30 +36,37 @@ public:
 
 	void stop();
 
-	void notify();
+	inline void notify()
+	{ _relay.notify(); }
 
-	bool suspended() const;
+	inline bool suspended()
+	{ return _relay.suspend_count() > 0; }
 	
-	bool notified() const;
+	inline bool notified()
+	{ return _relay.notified(); }
 
-	bool is_current() const;
-
-    static void _serve();
+	bool is_current();
 
 protected:
 
 	process();
 
-    void suspend();
-
-	/*template<typename... Ts>
+	template<typename... Ts>
 	inline std::enable_if_t<(sizeof...(Ts) <= 1)> suspend(Ts&&... vs)
 	{
 		if(is_current())
-			_suspend(std::forward<Ts>(vs)...);
+			_relay.suspend(std::forward<Ts>(vs)...);
 		else
 			throw std::logic_error("suspend is only callable from within the process");
-	}*/
+	}
+
+	inline void abort()
+	{
+		if(is_current())
+			throw process_abortion();
+		else
+			throw std::logic_error("abort is only callable from within the process");
+	}
 };
 
 }

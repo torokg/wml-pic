@@ -23,14 +23,7 @@ public:
 	{};
 
 	~relay()
-	{
-		ul_t ul(lk);
-		if(sc)
-		{
-			//TODO: throw sched::invalid_state ?? or something...
-			abort();
-		}
-	}
+	{ notify(); }
 
 	inline void suspend()
 	{
@@ -88,7 +81,7 @@ public:
 		en = false;
 	}
 
-	inline bool is_notified() const
+	inline bool notified() const
 	{ return en; }
 
 	inline size_t suspend_count() const

@@ -52,8 +52,8 @@ using spi_pkt_buffer_t =
     >;
 
 static constexpr size_t max_packet_size = 256;
-static constexpr size_t max_incoming_packets = 16;
-static constexpr size_t max_outgoing_packets = 16;
+static constexpr size_t max_incoming_packets = 4;
+static constexpr size_t max_outgoing_packets = 4;
     
 
 template
@@ -77,9 +77,11 @@ class spi_pkt_slave
     static TX_THREAD proc_read;
     
     static TX_SEMAPHORE sem_write_api;
+    static TX_SEMAPHORE sem_write_buffer;
+    
     static TX_THREAD proc_write;
     
-    static uint8_t rbuf[max_packet_size];
+    static uint8_t rbuf[max_packet_size+1];
     static uint8_t wbuf[max_packet_size];
     
     static constexpr size_t calc_dgram_size(size_t data_size)
@@ -94,51 +96,32 @@ class spi_pkt_slave
         while(true)
         {
             uint8_t *rbp = rbuf;
-            size_t size = tRead(rbp,max_packet_size);
+            size_t size = tRead(rbp,1);
+            if(*rbp != start_byte)
+                continue;
+            
+            size = tRead(rbp,1);
+            
+            size = tRead(rbp,(int)rbp[0]+1);
+            
+            if(rbp[size-1] != stop_byte)
+                continue;
 
-            while(size >= calc_dgram_size(0))
-            {
-                if(*rbp != start_byte)
-                {
-                    ++rbp; --size;
-                    continue;
-                }
+            ++packet_count;
 
-                spi_pkt_header_t *pkt = (spi_pkt_header_t*)rbp;
+            tx_semaphore_get(&sem_incoming,TX_WAIT_FOREVER);
 
-                const size_t dgram_size = calc_dgram_size(pkt->size);
-
-                if(dgram_size > size)
-                {
-                    ++rbp;
-                    --size;
-                    continue;
-                }
-
-                if(rbp[dgram_size-1] != stop_byte)
-                {
-                    ++rbp;
-                    --size;
-                    continue;
-                }
-
-                ++packet_count;
-
-                tx_semaphore_get(&sem_incoming,TX_WAIT_FOREVER);
-
-                static_assert(max_incoming_packets > 0, "max_incoming_packets must be at least 1");
+            static_assert(max_incoming_packets > 0, "max_incoming_packets must be at least 1");
                 
-                while(incoming->size() >= max_incoming_packets)
-                    incoming->pop_front();
+            while(incoming->size() >= max_incoming_packets)
+                incoming->pop_front();
 
-                incoming->emplace_back(rbp+sizeof(spi_pkt_header_t),rbp+dgram_size-1);
+            incoming->emplace_back(rbp,rbp+size-1);
                 
-                tx_semaphore_ceiling_put(&sem_incoming,1);
+            tx_semaphore_ceiling_put(&sem_incoming,1);
                 
-                tx_semaphore_ceiling_put(&sem_read_api,1);
+            tx_semaphore_ceiling_put(&sem_read_api,1);
 
-                size -= dgram_size;
-            }
         }
         tx_semaphore_get(&sem_incoming,TX_WAIT_FOREVER);
     }
@@ -182,6 +165,8 @@ class spi_pkt_slave
                     outgoing->emplace_front(std::move(data));
                 tx_semaphore_ceiling_put(&sem_outgoing,1);
             }
+            else
+                tx_semaphore_put(&sem_write_buffer);
         }
         tx_semaphore_get(&sem_outgoing,TX_WAIT_FOREVER);
     }
@@ -192,6 +177,7 @@ public:
     {
         tx_semaphore_create(&sem_read_api,"",0);
         tx_semaphore_create(&sem_write_api,"",0);
+        tx_semaphore_create(&sem_write_buffer,"",max_outgoing_packets);
         tx_semaphore_create(&sem_incoming,"",0);
         tx_semaphore_create(&sem_outgoing,"",0);
         
@@ -240,12 +226,14 @@ public:
     {
         if(data.size() > (max_packet_size-sizeof(spi_pkt_header_t)-sizeof(spi_pkt_footer_t)))
             return false;
+        
+        tx_semaphore_get(&sem_write_buffer,TX_WAIT_FOREVER);
+        
         tx_semaphore_get(&sem_outgoing,TX_WAIT_FOREVER);
-        if(outgoing->size() >= max_outgoing_packets)
-            outgoing->pop_front();
+        if(!outgoing->size())
+            tx_semaphore_ceiling_put(&sem_write_api,1);
         outgoing->emplace_back(std::move(data));
         tx_semaphore_ceiling_put(&sem_outgoing,1);
-        tx_semaphore_ceiling_put(&sem_write_api,1);
         return true;
     }
 };
@@ -269,9 +257,10 @@ MEMBER(TX_SEMAPHORE,sem_read_api);
 MEMBER(TX_THREAD,proc_read);
 
 MEMBER(TX_SEMAPHORE,sem_write_api);
+MEMBER(TX_SEMAPHORE,sem_write_buffer);
 MEMBER(TX_THREAD,proc_write);
 
-MEMBER(uint8_t,rbuf[max_packet_size]);
+MEMBER(uint8_t,rbuf[max_packet_size+1]);
 MEMBER(uint8_t,wbuf[max_packet_size]);
 
 #undef MEMBER

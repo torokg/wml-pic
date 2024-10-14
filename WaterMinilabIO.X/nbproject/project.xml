@@ -15,6 +15,7 @@
                 <sourceRootElem>earpc</sourceRootElem>
                 <sourceRootElem>sched</sourceRootElem>
                 <sourceRootElem>../src/config/default/peripheral/spi</sourceRootElem>
+                <sourceRootElem>drivers</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

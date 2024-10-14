@@ -124,8 +124,8 @@ extern "C"
 /* NOTE:  This region should be large enough to supply the memory       */
 /*        for all pthread stacks, pthread control blocks in the system  */
 
-#define  TX_DEFAULT_THREAD_STACK_SIZE   2048
-#define  TX_REGION0_CONSTANT            48
+#define  TX_DEFAULT_THREAD_STACK_SIZE   4096
+#define  TX_REGION0_CONSTANT            24
 #define  TX_REGION0_SIZE                ( (TX_DEFAULT_THREAD_STACK_SIZE+16) * TX_REGION0_CONSTANT)
 
 #define  POSIX_HEAP_SIZE_IN_BYTES       (TX_REGION0_SIZE * 4)
@@ -134,8 +134,8 @@ extern "C"
 
 
 /* Define number of CPU ticks per second */
-#define  CPU_TICKS_PER_SECOND           100  /* assuming 10 mSec tick */  
-#define  NANOSECONDS_IN_CPU_TICK        10000000  /* assuming 10 mSec tick */ 
+#define  CPU_TICKS_PER_SECOND           TX_TICK_RATE_HZ
+#define  NANOSECONDS_IN_CPU_TICK        (1000000000/TX_TICK_RATE_HZ) 
 
 /* Define queue control specific data definitions.  */
 
