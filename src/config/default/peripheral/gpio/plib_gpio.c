@@ -97,7 +97,7 @@ void GPIO_Initialize ( void )
     PORTD;
     IEC3SET = _IEC3_CNDIE_MASK;
     /* PORTE Initialization */
-    LATE = 0x48U; /* Initial Latch Value */
+    LATE = 0x4aU; /* Initial Latch Value */
     TRISECLR = 0x6fU; /* Direction Control */
     ANSELECLR = 0x3f0U; /* Digital Mode Enable */
     /* PORTF Initialization */

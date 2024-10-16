@@ -13,6 +13,8 @@ stepper::index_handler(GPIO_PIN pin)
 {
     if(pin != pin_index)
         return;
+    if(!GPIO_PinRead(pin))
+        return;
     ++index_count;
     tx_semaphore_ceiling_put(&sem_notify,1);
 }
@@ -48,9 +50,13 @@ stepper::stepper(HardwareSerial &serial, TMC2209::SerialAddress address, GPIO_PI
     setCoolStepCurrentIncrement(TMC2209::CURRENT_INCREMENT_8);
     setCoolStepMeasurementCount(TMC2209::MEASUREMENT_COUNT_32);
     enableAnalogCurrentScaling();
-    enableCoolStep();
+    //enableCoolStep();
     disableStealthChop();
+    moveAtVelocity(0);
     enable();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    
     process = new std::thread(std::bind(&stepper::process_start,this));
 }
 
@@ -82,7 +88,7 @@ void stepper::process_start()
         {
             const float mxacc = float(max_accel)*steps_per_rev*256/60;
             const float max_velocity = float(max_rpm)*steps_per_rev*256/60;
-            const float suggested_velocity = abs(float(dist)*256*2/current_speed*mxacc);
+            const float suggested_velocity = abs(float(dist)*256*4/current_speed*mxacc);
             /*io::host::log(
                 "current index: ",current_index, "; target index: ",target_index,
                 "\n; max velocity: ", max_velocity, "; max accel: ", mxacc,
@@ -91,7 +97,7 @@ void stepper::process_start()
            );*/
             
             int sgn = (dist < 0) ? -1 : 1;
-            const int32_t new_speed = (int32_t)(std::clamp(sgn*std::min(max_velocity,suggested_velocity), current_speed - mxacc/100, current_speed + mxacc/100)*std::clamp((float)abs(dist)/3,0.3f,1.0f));
+            const int32_t new_speed = (int32_t)(std::clamp(sgn*std::min(max_velocity,suggested_velocity), current_speed - mxacc/100, current_speed + mxacc/100));
             
             if(abs(dist)>1)
             {

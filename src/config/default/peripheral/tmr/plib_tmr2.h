@@ -1,27 +1,20 @@
 /*******************************************************************************
-  SYS CLK Static Functions for Clock System Service
+  Data Type definition of Timer PLIB
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    plib_clk.c
+    plib_tmr2.h
 
   Summary:
-    SYS CLK static function implementations for the Clock System Service.
+    Data Type definition of the Timer Peripheral Interface Plib.
 
   Description:
-    The Clock System Service provides a simple interface to manage the
-    oscillators on Microchip microcontrollers. This file defines the static
-    implementation for the Clock System Service.
+    This file defines the Data Types for the Timer Plib.
 
   Remarks:
-    Static functions incorporate all system clock configuration settings as
-    determined by the user via the Microchip Harmony Configurator GUI.
-    It provides static version of the routines, eliminating the need for an
-    object ID or object handle.
-
-    Static single-open interfaces also eliminate the need for the open handle.
+    None.
 
 *******************************************************************************/
 
@@ -48,64 +41,63 @@
 * THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 
-// *****************************************************************************
-// *****************************************************************************
-// Section: Include Files
-// *****************************************************************************
-// *****************************************************************************
+#ifndef PLIB_TMR2_H
+#define PLIB_TMR2_H
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include "device.h"
-#include "plib_clk.h"
+#include "plib_tmr_common.h"
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
+    extern "C" {
+
+#endif
+// DOM-IGNORE-END
 
 // *****************************************************************************
 // *****************************************************************************
-// Section: File Scope Functions
+// Section: Data Types
 // *****************************************************************************
 // *****************************************************************************
 
 // *****************************************************************************
-/* Function:
-    void CLK_Initialize( void )
-
-  Summary:
-    Initializes hardware and internal data structure of the System Clock.
-
-  Description:
-    This function initializes the hardware and internal data structure of System
-    Clock Service.
-
-  Remarks:
-    This is configuration values for the static version of the Clock System
-    Service module is determined by the user via the MHC GUI.
-
-    The objective is to eliminate the user's need to be knowledgeable in the
-    function of the 'configuration bits' to configure the system oscillators.
-*/
-
-void CLK_Initialize( void )
-{
-    /* unlock system for clock configuration */
-    SYSKEY = 0x00000000U;
-    SYSKEY = 0xAA996655U;
-    SYSKEY = 0x556699AAU;
+// *****************************************************************************
+// Section: Interface Routines
+// *****************************************************************************
+// *****************************************************************************
 
 
-  
+// *****************************************************************************
+void TMR2_Initialize(void);
 
-    /* Peripheral Module Disable Configuration */
+void TMR2_Start(void);
 
-    CFGCONbits.PMDLOCK = 0;
+void TMR2_Stop(void);
 
-    PMD1 = 0x1001U;
-    PMD2 = 0x3U;
-    PMD3 = 0xe201ffU;
-    PMD4 = 0x1f8U;
-    PMD5 = 0x301c0c00U;
-    PMD6 = 0x10830001U;
-    PMD7 = 0x500000U;
+void TMR2_PeriodSet(uint16_t period);
 
-    CFGCONbits.PMDLOCK = 1;
+uint16_t TMR2_PeriodGet(void);
 
-    /* Lock system since done with clock configuration */
-    SYSKEY = 0x33333333U;
-}
+uint16_t TMR2_CounterGet(void);
+
+uint32_t TMR2_FrequencyGet(void);
+
+void TMR2_InterruptEnable(void);
+
+void TMR2_InterruptDisable(void);
+
+void TMR2_CallbackRegister( TMR_CALLBACK callback_fn, uintptr_t context );
+
+
+// DOM-IGNORE-BEGIN
+#ifdef __cplusplus  // Provide C++ Compatibility
+
+    }
+#endif
+// DOM-IGNORE-END
+
+#endif /* PLIB_TMR2_H */

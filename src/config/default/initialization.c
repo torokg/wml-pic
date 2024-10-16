@@ -179,26 +179,32 @@ void SYS_Initialize ( void* data )
     PRECONbits.PFMWS = 3;
     CFGCONbits.ECCCON = 3;
 
-    //SPI int disable
+    //SPI1 int disable
     IEC3CLR = 0xE000;
     
 	GPIO_Initialize();
 
+    OCMP9_Initialize();
 
+    OCMP1_Initialize();
     
-	SPI1_Initialize();
+    OCMP4_Initialize();
+
+    OCMP5_Initialize();
 
     TMR1_Initialize();
+    
+    TMR2_Initialize();
 
-    /* MISRAC 2012 deviation block start */
-    /* Following MISRA-C rules deviated in this block  */
-    /* MISRA C-2012 Rule 11.3 - Deviation record ID - H3_MISRAC_2012_R_11_3_DR_1 */
-    /* MISRA C-2012 Rule 11.8 - Deviation record ID - H3_MISRAC_2012_R_11_8_DR_1 */
+    TMR3_Initialize();
+    
+    I2C1_Initialize();
+    
+    I2C2_Initialize();
+    
+    OCMP3_Initialize();
+    
 
-
-
-
-    /* MISRAC 2012 deviation block end */
     EVIC_Initialize();
 
 	/* Enable global interrupts */

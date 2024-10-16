@@ -48,19 +48,31 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include "peripheral/uart/plib_uart3.h"
-#include "peripheral/uart/plib_uart4.h"
-#include "peripheral/uart/plib_uart1.h"
-#include "peripheral/uart/plib_uart2.h"
+#include "peripheral/ocmp/plib_ocmp9.h"
 #include "peripheral/clk/plib_clk.h"
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
-#include "peripheral/spi/spi_slave/plib_spi1_slave.h"
+#include "peripheral/spi/spi_master/plib_spi6_master.h"
+#include "peripheral/spi/spi_master/plib_spi5_master.h"
+#include "peripheral/ocmp/plib_ocmp1.h"
+#include "peripheral/ocmp/plib_ocmp4.h"
+#include "peripheral/ocmp/plib_ocmp5.h"
 #include "tx_user.h"
 #include "tx_api.h"
 #include "tx_tmr1.h"
 #include "peripheral/uart/plib_uart5.h"
+#include "peripheral/ocmp/plib_ocmp3.h"
 #include "peripheral/uart/plib_uart6.h"
+#include "peripheral/uart/plib_uart3.h"
+#include "peripheral/i2c/master/plib_i2c1_master.h"
+#include "peripheral/i2c/master/plib_i2c2_master.h"
+#include "peripheral/uart/plib_uart4.h"
+#include "peripheral/uart/plib_uart1.h"
+#include "peripheral/uart/plib_uart2.h"
+#include "peripheral/tmr/plib_tmr2.h"
+#include "peripheral/tmr/plib_tmr3.h"
+#include "peripheral/spi/spi_master/plib_spi2_master.h"
+#include "peripheral/spi/spi_slave/plib_spi1_slave.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

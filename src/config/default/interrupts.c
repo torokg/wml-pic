@@ -66,9 +66,15 @@
 // Section: System Interrupt Vector declarations
 // *****************************************************************************
 // *****************************************************************************
+void TIMER_2_Handler (void);
+void TIMER_3_Handler (void);
+void I2C1_BUS_Handler (void);
+void I2C1_MASTER_Handler (void);
 void SPI1_FAULT_Handler (void);
 void SPI1_RX_Handler (void);
 void SPI1_TX_Handler (void);
+void SPI2_RX_Handler (void);
+void SPI2_TX_Handler (void);
 void UART1_FAULT_Handler (void);
 void UART1_RX_Handler (void);
 void UART1_TX_Handler (void);
@@ -81,9 +87,13 @@ void UART3_TX_Handler (void);
 void UART4_FAULT_Handler (void);
 void UART4_RX_Handler (void);
 void UART4_TX_Handler (void);
+void SPI5_RX_Handler (void);
+void SPI5_TX_Handler (void);
 void UART5_FAULT_Handler (void);
 void UART5_RX_Handler (void);
 void UART5_TX_Handler (void);
+void SPI6_RX_Handler (void);
+void SPI6_TX_Handler (void);
 void UART6_FAULT_Handler (void);
 void UART6_RX_Handler (void);
 void UART6_TX_Handler (void);
@@ -101,6 +111,15 @@ void CHANGE_NOTICE_K_Handler (void);
 // *****************************************************************************
 // *****************************************************************************
 
+void __ISR(_TIMER_2_VECTOR, ipl1SRS) TIMER_2_Handler (void)
+{
+    TIMER_2_InterruptHandler();
+}
+
+void __ISR(_TIMER_3_VECTOR, ipl1SRS) TIMER_3_Handler (void)
+{
+    TIMER_3_InterruptHandler();
+}
 
 void __ISR(_UART1_FAULT_VECTOR, ipl1SAVEALL) UART1_FAULT_Handler (void)
 {
@@ -122,6 +141,27 @@ void __ISR(_UART1_TX_VECTOR, ipl1SAVEALL) UART1_TX_Handler (void)
     UART1_TX_InterruptHandler();
     _tx_thread_context_restore();
 }
+
+void __ISR(_I2C1_BUS_VECTOR, ipl1SRS) I2C1_BUS_Handler (void)
+{
+    I2C1_BUS_InterruptHandler();
+}
+
+void __ISR(_I2C1_MASTER_VECTOR, ipl1SRS) I2C1_MASTER_Handler (void)
+{
+    I2C1_MASTER_InterruptHandler();
+}
+
+void __ISR(_I2C2_BUS_VECTOR, ipl1SRS) I2C2_BUS_Handler (void)
+{
+    I2C2_BUS_InterruptHandler();
+}
+
+void __ISR(_I2C2_MASTER_VECTOR, ipl1SRS) I2C2_MASTER_Handler (void)
+{
+    I2C2_MASTER_InterruptHandler();
+}
+
 
 void __ISR(_UART2_FAULT_VECTOR, ipl1SAVEALL) UART2_FAULT_Handler (void)
 {
@@ -272,7 +312,6 @@ void __ISR(_CHANGE_NOTICE_K_VECTOR, ipl1SRS) CHANGE_NOTICE_K_Handler (void)
 {
     CHANGE_NOTICE_K_InterruptHandler();
 }
-
 
 
 

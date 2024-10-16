@@ -16,9 +16,35 @@
             <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
               <itemPath>../src/config/default/peripheral/gpio/plib_gpio.h</itemPath>
             </logicalFolder>
+            <logicalFolder name="i2c" displayName="i2c" projectFiles="true">
+              <logicalFolder name="master" displayName="master" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/i2c/master/plib_i2c_master_common.h</itemPath>
+                <itemPath>../src/config/default/peripheral/i2c/master/plib_i2c2_master.h</itemPath>
+                <itemPath>../src/config/default/peripheral/i2c/master/plib_i2c1_master.h</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="ocmp" displayName="ocmp" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp_common.h</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp4.h</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp3.h</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp9.h</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp1.h</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp5.h</itemPath>
+            </logicalFolder>
             <logicalFolder name="spi" displayName="spi" projectFiles="true">
+              <logicalFolder name="spi_master" displayName="spi_master" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi5_master.h</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.h</itemPath>
+              </logicalFolder>
               <logicalFolder name="spi_slave" displayName="spi_slave" projectFiles="true">
               </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr3.h</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr2.h</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr_common.h</itemPath>
             </logicalFolder>
             <logicalFolder name="uart" displayName="uart" projectFiles="true">
               <itemPath>../src/config/default/peripheral/uart/plib_uart1.h</itemPath>
@@ -99,12 +125,34 @@
             <logicalFolder name="gpio" displayName="gpio" projectFiles="true">
               <itemPath>../src/config/default/peripheral/gpio/plib_gpio.c</itemPath>
             </logicalFolder>
+            <logicalFolder name="i2c" displayName="i2c" projectFiles="true">
+              <logicalFolder name="master" displayName="master" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/i2c/master/plib_i2c2_master.c</itemPath>
+                <itemPath>../src/config/default/peripheral/i2c/master/plib_i2c1_master.c</itemPath>
+              </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="ocmp" displayName="ocmp" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp4.c</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp3.c</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp9.c</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp1.c</itemPath>
+              <itemPath>../src/config/default/peripheral/ocmp/plib_ocmp5.c</itemPath>
+            </logicalFolder>
             <logicalFolder name="spi" displayName="spi" projectFiles="true">
+              <logicalFolder name="spi_master" displayName="spi_master" projectFiles="true">
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi5_master.c</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi6_master.c</itemPath>
+                <itemPath>../src/config/default/peripheral/spi/spi_master/plib_spi2_master.c</itemPath>
+              </logicalFolder>
               <logicalFolder name="spi_slave" displayName="spi_slave" projectFiles="true">
                 <itemPath>../src/config/default/peripheral/spi/spi_slave/plib_spi1_slave.c</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_slave/plib_spi1_slave.h</itemPath>
                 <itemPath>../src/config/default/peripheral/spi/spi_slave/plib_spi_slave_common.h</itemPath>
               </logicalFolder>
+            </logicalFolder>
+            <logicalFolder name="tmr" displayName="tmr" projectFiles="true">
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr3.c</itemPath>
+              <itemPath>../src/config/default/peripheral/tmr/plib_tmr2.c</itemPath>
             </logicalFolder>
             <logicalFolder name="uart" displayName="uart" projectFiles="true">
               <itemPath>../src/config/default/peripheral/uart/plib_uart1.c</itemPath>
@@ -131,12 +179,25 @@
       <logicalFolder name="dev" displayName="dev" projectFiles="true">
         <itemPath>dev/stepper.hh</itemPath>
         <itemPath>dev/stepper.cc</itemPath>
+        <itemPath>dev/servo.hh</itemPath>
+        <itemPath>dev/servo.cc</itemPath>
+        <itemPath>dev/pwm.hh</itemPath>
+        <itemPath>dev/valve.hh</itemPath>
+        <itemPath>dev/bdc.hh</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+        <logicalFolder name="MCP23S17" displayName="MCP23S17" projectFiles="true">
+          <itemPath>drivers/MCP23S17/MCP23S17.cc</itemPath>
+        </logicalFolder>
+        <logicalFolder name="TLE9201" displayName="TLE9201" projectFiles="true">
+          <itemPath>drivers/TLE9201/TLE9201.cc</itemPath>
+        </logicalFolder>
         <logicalFolder name="TMC2209" displayName="TMC2209" projectFiles="true">
           <itemPath>drivers/TMC2209/TMC2209.cpp</itemPath>
         </logicalFolder>
         <itemPath>drivers/TMC2209.h</itemPath>
+        <itemPath>drivers/MCP23S17.h</itemPath>
+        <itemPath>drivers/TLE9201.h</itemPath>
       </logicalFolder>
       <logicalFolder name="earpc" displayName="earpc" projectFiles="true">
         <logicalFolder name="buffer" displayName="buffer" projectFiles="true">
@@ -818,6 +879,7 @@
         <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
