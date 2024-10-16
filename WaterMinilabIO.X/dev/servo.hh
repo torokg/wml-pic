@@ -20,7 +20,7 @@ class servo
     const float hib;
     
 public:
-    
+
     inline void setAngle(float angle)
     {
         angle += 1.f;

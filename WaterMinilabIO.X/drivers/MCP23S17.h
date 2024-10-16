@@ -2,14 +2,8 @@
 # define DRIVER_MCP23S17_H
 # include <cstddef>
 # include <mutex>
-# include "definitions.h"
+# include <drivers/spi.hh>
 
-struct SPI
-{
-	bool(*const Read)(void* dest, size_t size);
-	bool(*const Write)(void* src, size_t size);
-	bool(*const WriteRead)(void* src, size_t wsize, void *dst, size_t rsize);
-};
 
 class MCP23S17
 {

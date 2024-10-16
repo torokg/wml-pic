@@ -186,8 +186,17 @@
         <itemPath>dev/bdc.hh</itemPath>
       </logicalFolder>
       <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
+        <logicalFolder name="A31301" displayName="A31301" projectFiles="true">
+          <itemPath>drivers/A31301/A31301.cc</itemPath>
+        </logicalFolder>
         <logicalFolder name="MCP23S17" displayName="MCP23S17" projectFiles="true">
           <itemPath>drivers/MCP23S17/MCP23S17.cc</itemPath>
+        </logicalFolder>
+        <logicalFolder name="PCA9536" displayName="PCA9536" projectFiles="true">
+          <itemPath>drivers/PCA9536/PCA9536.cc</itemPath>
+        </logicalFolder>
+        <logicalFolder name="PCA9546" displayName="PCA9546" projectFiles="true">
+          <itemPath>drivers/PCA9546/PCA9546.cc</itemPath>
         </logicalFolder>
         <logicalFolder name="TLE9201" displayName="TLE9201" projectFiles="true">
           <itemPath>drivers/TLE9201/TLE9201.cc</itemPath>
@@ -195,9 +204,18 @@
         <logicalFolder name="TMC2209" displayName="TMC2209" projectFiles="true">
           <itemPath>drivers/TMC2209/TMC2209.cpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="VNCL4040" displayName="VNCL4040" projectFiles="true">
+          <itemPath>drivers/VNCL4040/VNCL4040.cc</itemPath>
+        </logicalFolder>
         <itemPath>drivers/TMC2209.h</itemPath>
         <itemPath>drivers/MCP23S17.h</itemPath>
         <itemPath>drivers/TLE9201.h</itemPath>
+        <itemPath>drivers/spi.hh</itemPath>
+        <itemPath>drivers/i2c.hh</itemPath>
+        <itemPath>drivers/PCA9546.h</itemPath>
+        <itemPath>drivers/A31301.h</itemPath>
+        <itemPath>drivers/VNCL4040.h</itemPath>
+        <itemPath>drivers/PCA9536.h</itemPath>
       </logicalFolder>
       <logicalFolder name="earpc" displayName="earpc" projectFiles="true">
         <logicalFolder name="buffer" displayName="buffer" projectFiles="true">

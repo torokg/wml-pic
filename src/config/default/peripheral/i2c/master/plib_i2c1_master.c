@@ -51,7 +51,7 @@
 #include "device.h"
 #include "plib_i2c1_master.h"
 #include "interrupts.h"
-
+#include "tx_api.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data
@@ -59,11 +59,29 @@
 // *****************************************************************************
 #define NOP asm(" NOP")
 
+void __ISR(_I2C1_BUS_VECTOR, ipl1SAVEALL) I2C1_BUS_Handler (void)
+{
+    _tx_thread_context_save();
+    I2C1_BUS_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_I2C1_MASTER_VECTOR, ipl1SAVEALL) I2C1_MASTER_Handler (void)
+{
+    _tx_thread_context_save();
+    I2C1_MASTER_InterruptHandler();
+    _tx_thread_context_restore();
+}
 
 volatile static I2C_OBJ i2c1Obj;
 
+static TX_SEMAPHORE sem_i2c1_api, sem_i2c1_notify;
+
 void I2C1_Initialize(void)
 {
+    tx_semaphore_create(&sem_i2c1_api,"",1);
+    tx_semaphore_create(&sem_i2c1_notify,"",0);
+    
     /* Disable the I2C Master interrupt */
     IEC3CLR = _IEC3_I2C1MIE_MASK;
 
@@ -317,29 +335,13 @@ static void I2C1_TransferSM(void)
             i2c1Obj.state = I2C_STATE_IDLE;
             IEC3CLR = _IEC3_I2C1MIE_MASK;
             IEC3CLR = _IEC3_I2C1BIE_MASK;
-            if (i2c1Obj.callback != NULL)
-            {
-                uintptr_t context = i2c1Obj.context;
-
-                i2c1Obj.callback(context);
-            }
+            tx_semaphore_ceiling_put(&sem_i2c1_notify,1);
             break;
 
         default:
                    /*Do Nothing*/
             break;
     }
-}
-
-
-void I2C1_CallbackRegister(I2C_CALLBACK callback, uintptr_t contextHandle)
-{
-    if (callback != NULL)
-    {
-       i2c1Obj.callback = callback;
-       i2c1Obj.context = contextHandle;
-    }
-    return;
 }
 
 bool I2C1_IsBusy(void)
@@ -357,6 +359,7 @@ bool I2C1_IsBusy(void)
 
 bool I2C1_Read(uint16_t address, uint8_t* rdata, size_t rlength)
 {
+    tx_semaphore_get(&sem_i2c1_api,TX_WAIT_FOREVER);
     bool statusRead = false;
     uint32_t tempVar = I2C1STAT;
     /* State machine must be idle and I2C module should not have detected a start bit on the bus */
@@ -378,12 +381,19 @@ bool I2C1_Read(uint16_t address, uint8_t* rdata, size_t rlength)
         IEC3SET                     = _IEC3_I2C1BIE_MASK;
         statusRead = true;
     }
+    if(statusRead)
+    {
+        tx_semaphore_get(&sem_i2c1_notify,TX_WAIT_FOREVER);
+        statusRead = (i2c1Obj.error == I2C_ERROR_NONE);
+    }
+    tx_semaphore_ceiling_put(&sem_i2c1_api,1);
     return statusRead;
 }
 
 
 bool I2C1_Write(uint16_t address, uint8_t* wdata, size_t wlength)
 {
+    tx_semaphore_get(&sem_i2c1_api,TX_WAIT_FOREVER);
     bool statusWrite = false;
     uint32_t tempVar = I2C1STAT;
     /* State machine must be idle and I2C module should not have detected a start bit on the bus */
@@ -405,12 +415,19 @@ bool I2C1_Write(uint16_t address, uint8_t* wdata, size_t wlength)
         IEC3SET                     = _IEC3_I2C1BIE_MASK;
         statusWrite = true;
     }
+    if(statusWrite)
+    {
+        tx_semaphore_get(&sem_i2c1_notify,TX_WAIT_FOREVER);
+        statusWrite = (i2c1Obj.error == I2C_ERROR_NONE);
+    }
+    tx_semaphore_ceiling_put(&sem_i2c1_api,1);
     return statusWrite;
 }
 
 
 bool I2C1_WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* rdata, size_t rlength)
 {
+    tx_semaphore_get(&sem_i2c1_api,TX_WAIT_FOREVER);
     bool statusWriteread = false;
     uint32_t tempVar = I2C1STAT;
     /* State machine must be idle and I2C module should not have detected a start bit on the bus */
@@ -433,6 +450,12 @@ bool I2C1_WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* r
         IEC3SET                     = _IEC3_I2C1BIE_MASK;
         statusWriteread = true;
     }
+    if(statusWriteread)
+    {
+        tx_semaphore_get(&sem_i2c1_notify,TX_WAIT_FOREVER);
+        statusWriteread = (i2c1Obj.error == I2C_ERROR_NONE);
+    }
+    tx_semaphore_ceiling_put(&sem_i2c1_api,1);
     return statusWriteread;
 }
 
@@ -522,12 +545,7 @@ void __attribute__((used)) I2C1_BUS_InterruptHandler(void)
 
     i2c1Obj.error = I2C_ERROR_BUS_COLLISION;
 
-    if (i2c1Obj.callback != NULL)
-    {
-        uintptr_t context = i2c1Obj.context;
-
-        i2c1Obj.callback(context);
-    }
+    tx_semaphore_ceiling_put(&sem_i2c1_notify,1);
 }
 
 void __attribute__((used)) I2C1_MASTER_InterruptHandler(void)

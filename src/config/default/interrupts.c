@@ -142,27 +142,6 @@ void __ISR(_UART1_TX_VECTOR, ipl1SAVEALL) UART1_TX_Handler (void)
     _tx_thread_context_restore();
 }
 
-void __ISR(_I2C1_BUS_VECTOR, ipl1SRS) I2C1_BUS_Handler (void)
-{
-    I2C1_BUS_InterruptHandler();
-}
-
-void __ISR(_I2C1_MASTER_VECTOR, ipl1SRS) I2C1_MASTER_Handler (void)
-{
-    I2C1_MASTER_InterruptHandler();
-}
-
-void __ISR(_I2C2_BUS_VECTOR, ipl1SRS) I2C2_BUS_Handler (void)
-{
-    I2C2_BUS_InterruptHandler();
-}
-
-void __ISR(_I2C2_MASTER_VECTOR, ipl1SRS) I2C2_MASTER_Handler (void)
-{
-    I2C2_MASTER_InterruptHandler();
-}
-
-
 void __ISR(_UART2_FAULT_VECTOR, ipl1SAVEALL) UART2_FAULT_Handler (void)
 {
     _tx_thread_context_save();

@@ -1,9 +1,10 @@
 #ifndef DEV_BDC_HH
 # define DEV_BDC_HH
+# include <drivers/TLE9201.h>
 namespace dev
 {
     class bdc
-        : public TLE9201
+        : private TLE9201
     {
         
     public:
@@ -12,9 +13,13 @@ namespace dev
             : TLE9201(s,c)
         {}
                 
-        spin(bool direction, float duty);
-        
-        stop();
-    }
+        void operator()(float duty)
+        {
+            if(abs(duty) >= .5f)
+                start(duty > 0);
+            else
+                stop();
+        }
+    };
 }
 #endif

@@ -198,10 +198,6 @@ void SYS_Initialize ( void* data )
 
     TMR3_Initialize();
     
-    I2C1_Initialize();
-    
-    I2C2_Initialize();
-    
     OCMP3_Initialize();
     
 

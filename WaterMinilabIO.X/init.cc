@@ -4,11 +4,17 @@
 #include <condition_variable>
 #include "definitions.h"
 #include <io/host/service.hh>
+#include <drivers/i2c.hh>
 #include <drivers/MCP23S17.h>
+#include <drivers/PCA9536.h>
+#include <drivers/PCA9546.h>
+#include <drivers/A31301.h>
+#include <drivers/VNCL4040.h>
 #include <dev/stepper.hh>
 #include <dev/servo.hh>
 #include <dev/valve.hh>
 #include <dev/pwm.hh>
+#include <dev/bdc.hh>
 
 template<typename T>
 struct value_set_t
@@ -16,34 +22,7 @@ struct value_set_t
     T value;
     uint8_t item;
 };
-    
 
- 
-static HardwareSerial uart[6] = {
-        {UART1_SerialSetup, UART1_ReadCountGet, UART1_Read, UART1_Write, UART1_Flush},
-        {UART2_SerialSetup, UART2_ReadCountGet, UART2_Read, UART2_Write, UART2_Flush},
-        {UART3_SerialSetup, UART3_ReadCountGet, UART3_Read, UART3_Write, UART3_Flush},
-        {UART4_SerialSetup, UART4_ReadCountGet, UART4_Read, UART4_Write, UART4_Flush},
-        {UART5_SerialSetup, UART5_ReadCountGet, UART5_Read, UART5_Write, UART5_Flush},
-        {UART6_SerialSetup, UART6_ReadCountGet, UART6_Read, UART6_Write, UART6_Flush},
-        
-    };
-
- 
-static oc_type oc[5] = {
-    {OCMP1_CompareValueSet, 37499},
-    {OCMP9_CompareValueSet, 37499},
-    {OCMP5_CompareValueSet, 37499},
-    {OCMP3_CompareValueSet, 49998},
-    {OCMP4_CompareValueSet, 49998},
-};
-    
-static SPI spi[3] = {
-    {SPI2_Read, SPI2_Write, SPI2_WriteRead},
-    {SPI5_Read, SPI5_Write, SPI5_WriteRead},
-    {SPI6_Read, SPI6_Write, SPI6_WriteRead}
-};
-    
 
 void init()
 {
@@ -72,7 +51,41 @@ void init()
     SPI6_Initialize();
     
     
+    I2C1_Initialize();
+    
+    I2C2_Initialize();
+    
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+       
+ 
+    auto &uart = *new std::array<HardwareSerial,6>{
+        HardwareSerial{UART1_SerialSetup, UART1_ReadCountGet, UART1_Read, UART1_Write, UART1_Flush},
+        HardwareSerial{UART2_SerialSetup, UART2_ReadCountGet, UART2_Read, UART2_Write, UART2_Flush},
+        HardwareSerial{UART3_SerialSetup, UART3_ReadCountGet, UART3_Read, UART3_Write, UART3_Flush},
+        HardwareSerial{UART4_SerialSetup, UART4_ReadCountGet, UART4_Read, UART4_Write, UART4_Flush},
+        HardwareSerial{UART5_SerialSetup, UART5_ReadCountGet, UART5_Read, UART5_Write, UART5_Flush},
+        HardwareSerial{UART6_SerialSetup, UART6_ReadCountGet, UART6_Read, UART6_Write, UART6_Flush},
+    };
+
+    auto &oc = *new std::array<oc_type,5>{
+        oc_type{OCMP1_CompareValueSet, 37499},
+        oc_type{OCMP9_CompareValueSet, 37499},
+        oc_type{OCMP5_CompareValueSet, 37499},
+        oc_type{OCMP3_CompareValueSet, 49998},
+        oc_type{OCMP4_CompareValueSet, 49998},
+    };
+    
+    auto &spi = *new std::array<SPI,3>{
+        SPI{SPI2_Read, SPI2_Write, SPI2_WriteRead,{}},
+        SPI{SPI5_Read, SPI5_Write, SPI5_WriteRead,{}},
+        SPI{SPI6_Read, SPI6_Write, SPI6_WriteRead,{}}
+    };
+    
+    auto &i2c = *new std::array<NativeI2C,2>{
+        NativeI2C{I2C1_Read,I2C1_Write,I2C1_WriteRead},
+        NativeI2C{I2C2_Read,I2C2_Write,I2C2_WriteRead}
+    };
+    
    
     TMR2_Start();
     TMR2_InterruptEnable();
@@ -121,17 +134,33 @@ void init()
         dev::valve{portexp,11},
     };
     
-    /*auto &bdc = *new std::array<dev::bdc, 4> {
+    auto &bdc = *new std::array<dev::bdc, 4> {
         dev::bdc{spi[0],SPI2_CS0_PIN},
-        dev::bdc{spi[0],SPI2_CS0_PIN},
-        dev::bdc{spi[0],SPI2_CS0_PIN},
+        dev::bdc{spi[0],SPI2_CS1_PIN},
+        dev::bdc{spi[0],SPI2_CS2_PIN},
+        dev::bdc{spi[0],SPI2_CS3_PIN},
+    };
     
-    };*/
-    std::mutex lk;
-    std::condition_variable cv;
-    io::host::log("Setting earpc commands");
-
     
+    auto &i2c_portexp = *new std::array<PCA9536,2>{
+        PCA9536{i2c[0],0b100001},
+        PCA9536{i2c[1],0b100001}
+    };
+    
+    auto &i2c_mux = *new std::array<PCA9546,2>{
+        PCA9546{i2c[0],0b1111000},
+        PCA9546{i2c[1],0b1111000}
+    };
+    
+    auto &limit_sensor = *new std::array<A31301, 3>{
+        A31301{i2c_mux[0][0],0x6c},
+        A31301{i2c_mux[0][1],0x6c},
+        A31301{i2c_mux[0][2],0x6c},
+    };
+    
+    auto &proximity_sensor = *new VNCL4040(i2c_mux[0][3],0x60);
+    
+    //io::host::log("Setting earpc commands");
     //Send stepper to target index
     io::host::default_earpc::set_command<bool,value_set_t<int32_t> >(100,[&stepper](auto r) {
         auto x = r.value();
@@ -178,6 +207,18 @@ void init()
         {
             r.respond(true);
             pwm[x.item](x.value);
+        }
+    });
+    
+    //set bdc duty
+    io::host::default_earpc::set_command<bool,value_set_t<float> >(140,[&bdc](auto r) {
+        auto x = r.value();
+        if(x.item >= bdc.size())
+            r.respond(false);
+        else
+        {
+            r.respond(true);
+            bdc[x.item](x.value);
         }
     });
     

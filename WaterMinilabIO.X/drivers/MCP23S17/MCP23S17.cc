@@ -32,6 +32,7 @@ void
 MCP23S17::_value_write()
 {
 	uint8_t wbuf[4] = {0b01000000,0x14,reinterpret_cast<volatile uint8_t*>(&_value)[0],reinterpret_cast<volatile uint8_t*>(&_value)[1]};
+    std::unique_lock ul(spi.mutex);
 	GPIO_PinWrite(pin_cs,0);
 	spi.Write(wbuf,sizeof(wbuf));
 	GPIO_PinWrite(pin_cs,1);

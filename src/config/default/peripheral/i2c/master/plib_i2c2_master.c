@@ -51,7 +51,7 @@
 #include "device.h"
 #include "plib_i2c2_master.h"
 #include "interrupts.h"
-
+#include "tx_api.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: Global Data
@@ -60,10 +60,29 @@
 #define NOP asm(" NOP")
 
 
+void __ISR(_I2C2_BUS_VECTOR, ipl1SAVEALL) I2C2_BUS_Handler (void)
+{
+    _tx_thread_context_save();
+    I2C2_BUS_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
+void __ISR(_I2C2_MASTER_VECTOR, ipl1SAVEALL) I2C2_MASTER_Handler (void)
+{
+    _tx_thread_context_save();
+    I2C2_MASTER_InterruptHandler();
+    _tx_thread_context_restore();
+}
+
 volatile static I2C_OBJ i2c2Obj;
+
+static TX_SEMAPHORE sem_i2c2_api, sem_i2c2_notify;
 
 void I2C2_Initialize(void)
 {
+    tx_semaphore_create(&sem_i2c2_api,"",1);
+    tx_semaphore_create(&sem_i2c2_notify,"",0);
+
     /* Disable the I2C Master interrupt */
     IEC4CLR = _IEC4_I2C2MIE_MASK;
 
@@ -317,29 +336,13 @@ static void I2C2_TransferSM(void)
             i2c2Obj.state = I2C_STATE_IDLE;
             IEC4CLR = _IEC4_I2C2MIE_MASK;
             IEC4CLR = _IEC4_I2C2BIE_MASK;
-            if (i2c2Obj.callback != NULL)
-            {
-                uintptr_t context = i2c2Obj.context;
-
-                i2c2Obj.callback(context);
-            }
+            tx_semaphore_ceiling_put(&sem_i2c2_notify,1);
             break;
 
         default:
                    /*Do Nothing*/
             break;
     }
-}
-
-
-void I2C2_CallbackRegister(I2C_CALLBACK callback, uintptr_t contextHandle)
-{
-    if (callback != NULL)
-    {
-       i2c2Obj.callback = callback;
-       i2c2Obj.context = contextHandle;
-    }
-    return;
 }
 
 bool I2C2_IsBusy(void)
@@ -357,6 +360,7 @@ bool I2C2_IsBusy(void)
 
 bool I2C2_Read(uint16_t address, uint8_t* rdata, size_t rlength)
 {
+    tx_semaphore_get(&sem_i2c2_api,TX_WAIT_FOREVER);
     bool statusRead = false;
     uint32_t tempVar = I2C2STAT;
     /* State machine must be idle and I2C module should not have detected a start bit on the bus */
@@ -378,12 +382,19 @@ bool I2C2_Read(uint16_t address, uint8_t* rdata, size_t rlength)
         IEC4SET                     = _IEC4_I2C2BIE_MASK;
         statusRead = true;
     }
+    if(statusRead)
+    {
+        tx_semaphore_get(&sem_i2c2_notify,TX_WAIT_FOREVER);
+        statusRead = (i2c2Obj.error == I2C_ERROR_NONE);
+    }
+    tx_semaphore_ceiling_put(&sem_i2c2_api,1);
     return statusRead;
 }
 
 
 bool I2C2_Write(uint16_t address, uint8_t* wdata, size_t wlength)
 {
+    tx_semaphore_get(&sem_i2c2_api,TX_WAIT_FOREVER);
     bool statusWrite = false;
     uint32_t tempVar = I2C2STAT;
     /* State machine must be idle and I2C module should not have detected a start bit on the bus */
@@ -405,12 +416,19 @@ bool I2C2_Write(uint16_t address, uint8_t* wdata, size_t wlength)
         IEC4SET                     = _IEC4_I2C2BIE_MASK;
         statusWrite = true;
     }
+    if(statusWrite)
+    {
+        tx_semaphore_get(&sem_i2c2_notify,TX_WAIT_FOREVER);
+        statusWrite = (i2c2Obj.error == I2C_ERROR_NONE);
+    }
+    tx_semaphore_ceiling_put(&sem_i2c2_api,1);
     return statusWrite;
 }
 
 
 bool I2C2_WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* rdata, size_t rlength)
 {
+    tx_semaphore_get(&sem_i2c2_api,TX_WAIT_FOREVER);
     bool statusWriteread = false;
     uint32_t tempVar = I2C2STAT;
     /* State machine must be idle and I2C module should not have detected a start bit on the bus */
@@ -433,6 +451,12 @@ bool I2C2_WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* r
         IEC4SET                     = _IEC4_I2C2BIE_MASK;
         statusWriteread = true;
     }
+    if(statusWriteread)
+    {
+        tx_semaphore_get(&sem_i2c2_notify,TX_WAIT_FOREVER);
+        statusWriteread = (i2c2Obj.error == I2C_ERROR_NONE);
+    }
+    tx_semaphore_ceiling_put(&sem_i2c2_api,1);
     return statusWriteread;
 }
 
@@ -522,12 +546,7 @@ void __attribute__((used)) I2C2_BUS_InterruptHandler(void)
 
     i2c2Obj.error = I2C_ERROR_BUS_COLLISION;
 
-    if (i2c2Obj.callback != NULL)
-    {
-        uintptr_t context = i2c2Obj.context;
-
-        i2c2Obj.callback(context);
-    }
+    tx_semaphore_ceiling_put(&sem_i2c2_notify,1);
 }
 
 void __attribute__((used)) I2C2_MASTER_InterruptHandler(void)
