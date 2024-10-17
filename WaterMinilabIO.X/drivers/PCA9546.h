@@ -5,6 +5,7 @@
 # include <cstddef>
 # include <net/algorithm.h>
 # include <drivers/i2c.hh>
+# include <io/host/service.hh>
 
 class PCA9546
 {
@@ -19,15 +20,14 @@ class PCA9546
             return false;
         
         std::unique_lock ul(lk);
-        
-        uint8_t cmd = ((1<<line)&3);
-        if(!i2c.Write(0b1110000, &cmd, 1))
+        uint8_t cmd = ((1<<line)&0xf);
+        if(!i2c.Write(address, &cmd, 1))
             return false;
 
         bool rv = (i2c.*F)(std::forward<Ts>(vs)...);
         
         cmd = 0;
-        i2c.Write(0b1110000, &cmd, 1);
+        i2c.Write(address, &cmd, 1);
         
         return rv;
     }
@@ -36,7 +36,7 @@ class PCA9546
         : public I2C
     {
         PCA9546 &mux;
-        uint8_t line;
+        const volatile uint8_t line;
         
     public:
         

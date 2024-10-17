@@ -1,6 +1,7 @@
 #ifndef DRIVERS_I2C_HH
 # define DRIVERS_I2C_HH
-
+# include <cstddef>
+# include <cstdint>
 struct I2C
 {
     virtual ~I2C() {};

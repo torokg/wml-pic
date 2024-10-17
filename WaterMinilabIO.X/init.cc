@@ -24,6 +24,10 @@ struct value_set_t
 };
 
 
+template<typename... Ts>
+float distance(Ts&&... vs)
+{ return powf(((float(vs)*float(vs)) + ...), 1.f/sizeof...(Ts)); }
+
 void init()
 {
     if(!io::host::service::init())
@@ -97,8 +101,8 @@ void init()
             
     auto &stepper = *new std::array<dev::stepper,6> {
         dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, STX_ENABLE_PIN, STX_INDEX_PIN, STX_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300}, 
-        dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, STY_ENABLE_PIN, STY_INDEX_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},
-        dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, STZ_ENABLE_PIN, STZ_INDEX_PIN, STZ_DIAG_PIN, 100UL, 10UL, 200UL,  500, 300},
+        dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, STY_ENABLE_PIN, STY_INDEX_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},   // limit sensor: ; home: 
+        dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, STZ_ENABLE_PIN, STZ_INDEX_PIN, STZ_DIAG_PIN, 100UL, 10UL, 200UL,  500, 300},   // limit sensor: 2; home: z < -620
         dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, STC_ENABLE_PIN, STC_INDEX_PIN, STC_DIAG_PIN,  60UL,  10UL, 200UL, 500, 300},
         //{uart[5], TMC2209::SERIAL_ADDRESS_0, ST4_ENABLE_PIN, ST4_INDEX_PIN, ST4_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
         //{uart[5], TMC2209::SERIAL_ADDRESS_1, ST5_ENABLE_PIN, ST5_INDEX_PIN, ST5_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
@@ -143,14 +147,20 @@ void init()
     
     
     auto &i2c_portexp = *new std::array<PCA9536,2>{
-        PCA9536{i2c[0],0b100001},
-        PCA9536{i2c[1],0b100001}
+        PCA9536{i2c[0],0b1000001},
+        PCA9536{i2c[1],0b1000001}
     };
     
     auto &i2c_mux = *new std::array<PCA9546,2>{
-        PCA9546{i2c[0],0b1111000},
-        PCA9546{i2c[1],0b1111000}
+        PCA9546{i2c[0],0b1110000},
+        PCA9546{i2c[1],0b1110000}
     };
+    
+    if(!i2c_portexp[0].value(0))
+        io::host::log("Failed to turn on i2c hub 0");
+    
+    if(!i2c_portexp[1].value(0))
+        io::host::log("Failed to turn on i2c hub 1");
     
     auto &limit_sensor = *new std::array<A31301, 3>{
         A31301{i2c_mux[0][0],0x6c},
@@ -161,6 +171,23 @@ void init()
     auto &proximity_sensor = *new VNCL4040(i2c_mux[0][3],0x60);
     
     //io::host::log("Setting earpc commands");
+    
+    
+    //reboot
+    io::host::default_earpc::set_command<bool,bool>(10,[](auto r) {
+        r.respond(true);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // starting critical sequence
+        SYSKEY = 0x00000000; //write invalid key to force lock
+        SYSKEY = 0xAA996655; //write key1 to SYSKEY
+        SYSKEY = 0x556699AA; //write key2 to SYSKEY
+        // OSCCON is now unlocked
+
+        /* set SWRST bit to arm reset */
+        RSWRSTSET = 1;
+        volatile uint32_t y = RSWRST;
+    });
+    
     //Send stepper to target index
     io::host::default_earpc::set_command<bool,value_set_t<int32_t> >(100,[&stepper](auto r) {
         auto x = r.value();
@@ -172,8 +199,7 @@ void init()
             r.respond(true);
         }
     });
-    
-
+        
     //set servo to angle
     io::host::default_earpc::set_command<bool,value_set_t<float> >(110,[&servo](auto r) {
         auto x = r.value();
@@ -225,9 +251,27 @@ void init()
     
     while(true)
     {
+        //uint16_t rd;
+        //if(proximity_sensor.read(rd))
+        //    io::host::log("Proximity: ",rd);
+        //else
+        //    io::host::log("Proximity read failed");
+        
+        for(int i = 0; i < 3; ++i)
+        {
+            A31301::result lr;
+            memset(&lr,0,sizeof(A31301::result));
+            if(limit_sensor[i].read(lr))
+                io::host::log("Limit ",i,": ", lr.x ,'\t', lr.y, '\t',lr.z
+                        //distance(limit_result.x,limit_result.y,limit_result.z)
+                );
+            //else
+            //    io::host::log("Limit ",i," read failed");
+        }
+        
         //tx_semaphore_get(&sem_index,TX_WAIT_FOREVER);
         //auto sgr = stepper[0].getStallGuardResult();
         //io::host::log("STY index count: ",sty_index_count,"; stall guard result: ",sgr);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }

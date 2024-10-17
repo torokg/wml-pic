@@ -151,7 +151,6 @@ void TMC2209::setRunCurrent(uint8_t percent)
 {
   uint8_t run_current = percentToCurrentSetting(percent);
   driver_current_.irun = run_current;
-  io::host::log("Driver current: ",(int)driver_current_.irun);
   writeStoredDriverCurrent();
 }
 

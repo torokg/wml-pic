@@ -12,16 +12,16 @@ namespace net::algorithm
 			"value must be of an integral type"
 		);
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-			return value;
-#else
-			decltype(hton(value)) rv = value;
+        decltype(hton(value)) rv = value;
 
-			volatile uint8_t * const x = reinterpret_cast<uint8_t*>(&rv);
+		volatile uint8_t * const x = reinterpret_cast<uint8_t*>(&rv);
 
-			for(int i = 0; i < sizeof(rv)/2; ++i)
+		for(int i = 0; i < sizeof(rv)/2; ++i)
 				std::swap(x[i],x[sizeof(T)-1-i]);
 
-			return rv;
+		return rv;
+#else
+        return value;
 #endif
 	}
 

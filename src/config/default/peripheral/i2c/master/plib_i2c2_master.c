@@ -89,10 +89,10 @@ void I2C2_Initialize(void)
     /* Disable the I2C Bus collision interrupt */
     IEC4CLR = _IEC4_I2C2BIE_MASK;
 
-    I2C2BRG = 117;
+    I2C2BRG = 492;
 
     I2C2CONCLR = _I2C2CON_SIDL_MASK;
-    I2C2CONCLR = _I2C2CON_DISSLW_MASK;
+    I2C2CONSET = _I2C2CON_DISSLW_MASK;
     I2C2CONSET = _I2C2CON_SMEN_MASK;
 
     /* Clear master interrupt flag */

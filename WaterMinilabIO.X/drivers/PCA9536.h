@@ -1,5 +1,7 @@
 #ifndef DRIVERS_PCA9536_H
 # define DRIVERS_PCA9536_H
+# include <mutex>
+# include <drivers/i2c.hh>
 
 class PCA9536
 {
@@ -12,70 +14,21 @@ class PCA9536
     volatile uint8_t _value;
     std::mutex lk;
     
-    bool _read(uint8_t reg, uint8_t &data)
-    {
-        reg &= 3;
-        if(!i2c.Write(address, &reg, 1))
-            return false;
-        if(!i2c.Read(address, &data, 1))
-            return false;
-        return true;
-    }
+    bool _read(uint8_t reg, uint8_t &data);
     
-    bool _write(uint8_t reg, uint8_t data)
-    {
-        reg &= 3;
-        if(!i2c.Write(address, &reg, 1))
-            return false;
-        if(!i2c.Write(address, &data, 1))
-            return false;
-        return true;
-    }
+    bool _write(uint8_t reg, uint8_t data);
     
 public:
     
-    PCA9536(I2C &i, uint16_t a)
-        : i2c(i)
-        , address(a)
-        , _value(0)
-    {
-        _write(reg_dir,0);
-        _write(reg_output,0);
-    }
+    PCA9536(I2C &i, uint16_t a);
         
-    uint16_t value()
-    {
-        std::unique_lock ul(lk);
-        return _value;
-    }
+    uint16_t value();
 
-	bool value(uint16_t pins)
-    {
-        std::unique_lock ul(lk);
-        if(_write(reg_output,pins))
-        {
-            _value = pins;
-            return true;
-        }
-        return false;
-    }
+	bool value(uint16_t pins);
 
-	bool pin_value(uint8_t pin)
-    {
-        std::unique_lock ul(lk);
-        return (_value >> pin) & 1;
-    }
+	bool pin_value(uint8_t pin);
 
-	bool pin_value(uint8_t pin, bool v)
-    {
-        std::unique_lock ul(lk);
-        uint16_t pins = _value;
-        if(v)
-            pins |= (1<<pin);
-        else
-            pins &= ~(1<<pin);
-        
-        return value(pins);
-    }
+	bool pin_value(uint8_t pin, bool v);
+    
 };
 #endif
