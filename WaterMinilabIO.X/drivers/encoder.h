@@ -16,8 +16,10 @@ public:
     volatile unsigned statep;
     
     volatile int32_t position;
+    const int32_t direction;
+    const bool intpin;
     
-    constexpr Encoder(GPIO_PIN en, GPIO_PIN a, GPIO_PIN b, GPIO_PIN z)
+    constexpr Encoder(GPIO_PIN en, GPIO_PIN a, GPIO_PIN b, GPIO_PIN z, bool ip, int32_t dir)
         : pin_en(en)
         , pin_a(a)
         , pin_b(b)
@@ -25,21 +27,21 @@ public:
         , state{0,0,0,0}
         , statep(0)
         , position(0)
+        , intpin(ip)
+        , direction(dir)
     {}
         
     inline void enable()
     {
         GPIO_PinSet(pin_en);
-        //GPIO_PinInterruptEnable(pin_a);
-        GPIO_PinInterruptEnable(pin_b);
-        //GPIO_PinInterruptEnable(pin_z);
+        GPIO_PinInterruptEnable(intpin?pin_b:pin_a);
     }
     
     inline void disable()
     {
         GPIO_PinClear(pin_en);
         //GPIO_PinInterruptDisable(pin_a);
-        GPIO_PinInterruptDisable(pin_b);
+        GPIO_PinInterruptDisable(intpin?pin_b:pin_a);
         //GPIO_PinInterruptDisable(pin_z);
     }
     

@@ -207,6 +207,9 @@
         <logicalFolder name="TMC2209" displayName="TMC2209" projectFiles="true">
           <itemPath>drivers/TMC2209/TMC2209.cpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="uart" displayName="uart" projectFiles="true">
+          <itemPath>drivers/uart/uart.cc</itemPath>
+        </logicalFolder>
         <logicalFolder name="VNCL4040" displayName="VNCL4040" projectFiles="true">
           <itemPath>drivers/VNCL4040/VNCL4040.cc</itemPath>
         </logicalFolder>
@@ -221,6 +224,8 @@
         <itemPath>drivers/PCA9536.h</itemPath>
         <itemPath>drivers/oc.hh</itemPath>
         <itemPath>drivers/encoder.h</itemPath>
+        <itemPath>drivers/hpint.cc</itemPath>
+        <itemPath>drivers/uart.hh</itemPath>
       </logicalFolder>
       <logicalFolder name="earpc" displayName="earpc" projectFiles="true">
         <logicalFolder name="buffer" displayName="buffer" projectFiles="true">
@@ -678,7 +683,6 @@
       <C32>
         <property key="additional-warnings" value="true"/>
         <property key="addresss-attribute-use" value="false"/>
-        <property key="appendMe" value="-Wno-error=unused-but-set-variable"/>
         <property key="enable-app-io" value="false"/>
         <property key="enable-omit-frame-pointer" value="false"/>
         <property key="enable-symbols" value="true"/>
@@ -690,7 +694,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="true"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O2"/>
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -709,7 +713,6 @@
         <property key="additional-options-chop-files" value="false"/>
       </C32-AR>
       <C32-AS>
-        <property key="appendMe" value=""/>
         <property key="assembler-symbols" value=""/>
         <property key="enable-symbols" value="true"/>
         <property key="exclude-floating-point-library" value="false"/>
@@ -739,7 +742,6 @@
         <property key="additional-options-use-response-files" value="false"/>
         <property key="additional-options-write-sla" value="false"/>
         <property key="allocate-dinit" value="false"/>
-        <property key="appendMe" value=""/>
         <property key="code-dinit" value="false"/>
         <property key="ebase-addr" value=""/>
         <property key="enable-check-sections" value="true"/>
@@ -779,7 +781,6 @@
       <C32CPP>
         <property key="additional-warnings" value="false"/>
         <property key="addresss-attribute-use" value="false"/>
-        <property key="appendMe" value="-std=c++17 -Wno-error=unused-but-set-variable"/>
         <property key="check-new" value="false"/>
         <property key="eh-specs" value="true"/>
         <property key="enable-app-io" value="false"/>
@@ -794,7 +795,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value=""/>
+        <property key="optimization-level" value="-O2"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -902,7 +903,6 @@
         <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>

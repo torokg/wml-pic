@@ -739,23 +739,23 @@
 #define UART4_RX_Get()               ((PORTD >> 5) & 0x1U)
 #define UART4_RX_PIN                  GPIO_PIN_RD5
 
-/*** Macros for ENCY_Z pin ***/
-#define ENCY_Z_Set()               (LATDSET = (1U<<6))
-#define ENCY_Z_Clear()             (LATDCLR = (1U<<6))
-#define ENCY_Z_Toggle()            (LATDINV= (1U<<6))
-#define ENCY_Z_OutputEnable()      (TRISDCLR = (1U<<6))
-#define ENCY_Z_InputEnable()       (TRISDSET = (1U<<6))
-#define ENCY_Z_Get()               ((PORTD >> 6) & 0x1U)
-#define ENCY_Z_PIN                  GPIO_PIN_RD6
-
 /*** Macros for ENCY_B pin ***/
-#define ENCY_B_Set()               (LATDSET = (1U<<7))
-#define ENCY_B_Clear()             (LATDCLR = (1U<<7))
-#define ENCY_B_Toggle()            (LATDINV= (1U<<7))
-#define ENCY_B_OutputEnable()      (TRISDCLR = (1U<<7))
-#define ENCY_B_InputEnable()       (TRISDSET = (1U<<7))
-#define ENCY_B_Get()               ((PORTD >> 7) & 0x1U)
-#define ENCY_B_PIN                  GPIO_PIN_RD7
+#define ENCY_B_Set()               (LATDSET = (1U<<6))
+#define ENCY_B_Clear()             (LATDCLR = (1U<<6))
+#define ENCY_B_Toggle()            (LATDINV= (1U<<6))
+#define ENCY_B_OutputEnable()      (TRISDCLR = (1U<<6))
+#define ENCY_B_InputEnable()       (TRISDSET = (1U<<6))
+#define ENCY_B_Get()               ((PORTD >> 6) & 0x1U)
+#define ENCY_B_PIN                  GPIO_PIN_RD6
+
+/*** Macros for ENCY_Z pin ***/
+#define ENCY_Z_Set()               (LATDSET = (1U<<7))
+#define ENCY_Z_Clear()             (LATDCLR = (1U<<7))
+#define ENCY_Z_Toggle()            (LATDINV= (1U<<7))
+#define ENCY_Z_OutputEnable()      (TRISDCLR = (1U<<7))
+#define ENCY_Z_InputEnable()       (TRISDSET = (1U<<7))
+#define ENCY_Z_Get()               ((PORTD >> 7) & 0x1U)
+#define ENCY_Z_PIN                  GPIO_PIN_RD7
 
 /*** Macros for UART1_TX pin ***/
 #define UART1_TX_Get()               ((PORTF >> 0) & 0x1U)
@@ -790,6 +790,8 @@
 #define ENCZ_B_InputEnable()       (TRISASET = (1U<<6))
 #define ENCZ_B_Get()               ((PORTA >> 6) & 0x1U)
 #define ENCZ_B_PIN                  GPIO_PIN_RA6
+#define ENCZ_B_InterruptEnable()   (CNENASET = (1U<<6))
+#define ENCZ_B_InterruptDisable()  (CNENACLR = (1U<<6))
 
 /*** Macros for ENCZ_A pin ***/
 #define ENCZ_A_Set()               (LATASET = (1U<<7))
@@ -799,8 +801,6 @@
 #define ENCZ_A_InputEnable()       (TRISASET = (1U<<7))
 #define ENCZ_A_Get()               ((PORTA >> 7) & 0x1U)
 #define ENCZ_A_PIN                  GPIO_PIN_RA7
-#define ENCZ_A_InterruptEnable()   (CNENASET = (1U<<7))
-#define ENCZ_A_InterruptDisable()  (CNENACLR = (1U<<7))
 
 /*** Macros for ENCZ_Z pin ***/
 #define ENCZ_Z_Set()               (LATJSET = (1U<<4))
@@ -811,14 +811,14 @@
 #define ENCZ_Z_Get()               ((PORTJ >> 4) & 0x1U)
 #define ENCZ_Z_PIN                  GPIO_PIN_RJ4
 
-/*** Macros for ENCC_Z pin ***/
-#define ENCC_Z_Set()               (LATJSET = (1U<<5))
-#define ENCC_Z_Clear()             (LATJCLR = (1U<<5))
-#define ENCC_Z_Toggle()            (LATJINV= (1U<<5))
-#define ENCC_Z_OutputEnable()      (TRISJCLR = (1U<<5))
-#define ENCC_Z_InputEnable()       (TRISJSET = (1U<<5))
-#define ENCC_Z_Get()               ((PORTJ >> 5) & 0x1U)
-#define ENCC_Z_PIN                  GPIO_PIN_RJ5
+/*** Macros for ENCC_A pin ***/
+#define ENCC_A_Set()               (LATJSET = (1U<<5))
+#define ENCC_A_Clear()             (LATJCLR = (1U<<5))
+#define ENCC_A_Toggle()            (LATJINV= (1U<<5))
+#define ENCC_A_OutputEnable()      (TRISJCLR = (1U<<5))
+#define ENCC_A_InputEnable()       (TRISJSET = (1U<<5))
+#define ENCC_A_Get()               ((PORTJ >> 5) & 0x1U)
+#define ENCC_A_PIN                  GPIO_PIN_RJ5
 
 /*** Macros for ENCC_B pin ***/
 #define ENCC_B_Set()               (LATJSET = (1U<<6))
@@ -828,17 +828,17 @@
 #define ENCC_B_InputEnable()       (TRISJSET = (1U<<6))
 #define ENCC_B_Get()               ((PORTJ >> 6) & 0x1U)
 #define ENCC_B_PIN                  GPIO_PIN_RJ6
+#define ENCC_B_InterruptEnable()   (CNENJSET = (1U<<6))
+#define ENCC_B_InterruptDisable()  (CNENJCLR = (1U<<6))
 
-/*** Macros for ENCC_A pin ***/
-#define ENCC_A_Set()               (LATJSET = (1U<<7))
-#define ENCC_A_Clear()             (LATJCLR = (1U<<7))
-#define ENCC_A_Toggle()            (LATJINV= (1U<<7))
-#define ENCC_A_OutputEnable()      (TRISJCLR = (1U<<7))
-#define ENCC_A_InputEnable()       (TRISJSET = (1U<<7))
-#define ENCC_A_Get()               ((PORTJ >> 7) & 0x1U)
-#define ENCC_A_PIN                  GPIO_PIN_RJ7
-#define ENCC_A_InterruptEnable()   (CNENJSET = (1U<<7))
-#define ENCC_A_InterruptDisable()  (CNENJCLR = (1U<<7))
+/*** Macros for ENCC_Z pin ***/
+#define ENCC_Z_Set()               (LATJSET = (1U<<7))
+#define ENCC_Z_Clear()             (LATJCLR = (1U<<7))
+#define ENCC_Z_Toggle()            (LATJINV= (1U<<7))
+#define ENCC_Z_OutputEnable()      (TRISJCLR = (1U<<7))
+#define ENCC_Z_InputEnable()       (TRISJSET = (1U<<7))
+#define ENCC_Z_Get()               ((PORTJ >> 7) & 0x1U)
+#define ENCC_Z_PIN                  GPIO_PIN_RJ7
 
 /*** Macros for ENCZ_ENABLE pin ***/
 #define ENCZ_ENABLE_Set()               (LATESET = (1U<<0))

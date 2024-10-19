@@ -211,9 +211,9 @@ void GPIO_Initialize ( void )
     
     portPinCbObj[11 + 1].pin = GPIO_PIN_RJ3;
     
-    portPinCbObj[0 + 0].pin = GPIO_PIN_RA7;
+    portPinCbObj[0 + 0].pin = GPIO_PIN_RA6;
     
-    portPinCbObj[11 + 2].pin = GPIO_PIN_RJ7;
+    portPinCbObj[11 + 2].pin = GPIO_PIN_RJ6;
     
     portPinCbObj[6 + 1].pin = GPIO_PIN_RG12;
     
@@ -507,55 +507,6 @@ bool GPIO_PinInterruptCallbackRegister(
 
 // *****************************************************************************
 /* Function:
-    void CHANGE_NOTICE_A_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for change notice interrupt for channel A.
-
-  Remarks:
-    It is an internal function called from ISR, user should not call it directly.
-*/
-
-// *****************************************************************************
-/* Function:
-    void CHANGE_NOTICE_C_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for change notice interrupt for channel C.
-
-  Remarks:
-    It is an internal function called from ISR, user should not call it directly.
-*/
-    
-void __attribute__((used)) CHANGE_NOTICE_C_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
-
-    status  = CNSTATC;
-    status &= CNENC;
-
-    PORTC;
-    IFS3CLR = _IFS3_CNCIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 1; i < 3; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
-
-// *****************************************************************************
-/* Function:
     void CHANGE_NOTICE_D_InterruptHandler(void)
 
   Summary:
@@ -591,95 +542,6 @@ void __attribute__((used)) CHANGE_NOTICE_D_InterruptHandler(void)
         }
     }
 }
-
-// *****************************************************************************
-/* Function:
-    void CHANGE_NOTICE_G_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for change notice interrupt for channel G.
-
-  Remarks:
-    It is an internal function called from ISR, user should not call it directly.
-*/
-    
-void __attribute__((used)) CHANGE_NOTICE_G_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
-
-    status  = CNSTATG;
-    status &= CNENG;
-
-    PORTG;
-    IFS3CLR = _IFS3_CNGIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 6; i < 8; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
-
-// *****************************************************************************
-/* Function:
-    void CHANGE_NOTICE_H_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for change notice interrupt for channel H.
-
-  Remarks:
-    It is an internal function called from ISR, user should not call it directly.
-*/
-
-
-// *****************************************************************************
-/* Function:
-    void CHANGE_NOTICE_K_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for change notice interrupt for channel K.
-
-  Remarks:
-    It is an internal function called from ISR, user should not call it directly.
-*/
-    
-void __attribute__((used)) CHANGE_NOTICE_K_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
-
-    status  = CNSTATK;
-    status &= CNENK;
-
-    PORTK;
-    IFS3CLR = _IFS3_CNKIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 14; i < 16; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
-
 
 /*******************************************************************************
  End of File

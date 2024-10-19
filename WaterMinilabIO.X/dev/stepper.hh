@@ -1,8 +1,42 @@
 #ifndef DEV_STEPPER_HH
 # define DEV_STEPPER_HH
 # include <drivers/TMC2209.h>
+# include <drivers/encoder.h>
+
+    
+struct stepper_index_handler
+{
+    GPIO_PIN pin;
+    volatile uint32_t count;
+    volatile bool last;
+    
+    
+    inline void enable()
+    { GPIO_PinInterruptEnable(pin); }
+    
+    inline void disable()
+    { GPIO_PinInterruptDisable(pin); }
+    
+    stepper_index_handler(GPIO_PIN p)
+        : pin(p)
+        , count(0)
+        , last(false)
+    { disable(); }
+    
+    inline void notify()
+    {
+        const bool p = (bool)GPIO_PinRead(pin);
+        if(last == p)
+            return;
+        last = p;
+        if(p)
+            count += 1;
+    }
+};
+
 namespace dev
 {
+
 
 class stepper
     : public TMC2209
@@ -10,29 +44,27 @@ class stepper
     TX_SEMAPHORE sem_index;
     TX_SEMAPHORE sem_notify;
     std::mutex   target_index_lk;
-    volatile size_t  index_count;
+    stepper_index_handler &index;
+    Encoder *encoder;
     volatile size_t  last_index_count;
     volatile int32_t target_index;
     volatile int32_t current_index;
     volatile int32_t current_speed;
     volatile bool last_dir;
 
-    GPIO_PIN     pin_index;
     GPIO_PIN     pin_diag;
     size_t       steps_per_rev;
     size_t       max_rpm;
     size_t       max_accel;
     std::thread *process;
     
-    static void static_index_handler(GPIO_PIN pin, uintptr_t context);
-    
-    void index_handler(GPIO_PIN pin);
-    
     void process_start();
             
 public:
     
-    stepper(HardwareSerial &serial, TMC2209::SerialAddress address, GPIO_PIN penable, GPIO_PIN pindex, GPIO_PIN pdiag, uint8_t runCurrent, uint8_t holdCurrent, size_t spr, size_t mrpm, size_t macc);
+    stepper(HardwareSerial &serial, TMC2209::SerialAddress address, stepper_index_handler &index, Encoder *enc, GPIO_PIN penable, GPIO_PIN pdiag, uint8_t runCurrent, uint8_t holdCurrent, size_t spr, size_t mrpm, size_t macc);
+
+    void init();
     
     inline void setTargetIndex(int32_t v)
     {
@@ -43,5 +75,7 @@ public:
 };   
 
 }
+
+extern std::array<stepper_index_handler, 10> stepper_index;
 
 #endif

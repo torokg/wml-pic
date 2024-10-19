@@ -5,6 +5,7 @@
 #include "definitions.h"
 #include <io/host/service.hh>
 #include <drivers/i2c.hh>
+#include <drivers/uart.hh>
 #include <drivers/MCP23S17.h>
 #include <drivers/PCA9536.h>
 #include <drivers/PCA9546.h>
@@ -101,19 +102,20 @@ void init()
     
     io::host::log("Starting MCP23S17");
     auto &portexp = *new MCP23S17(spi[1], SPI5_CS_PIN, SPI5_RESET_PIN);
-            
+    
+             
     io::host::log("Starting all TMC2209");
     auto &stepper = *new std::array<dev::stepper,6> {
-        dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, STX_ENABLE_PIN, STX_INDEX_PIN, STX_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300}, 
-        dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, STY_ENABLE_PIN, STY_INDEX_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},   // limit sensor: ; home: 
-        dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, STZ_ENABLE_PIN, STZ_INDEX_PIN, STZ_DIAG_PIN, 100UL, 10UL, 200UL,  500, 300},   // limit sensor: 2; home: z < -620
-        dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, STC_ENABLE_PIN, STC_INDEX_PIN, STC_DIAG_PIN,  60UL,  10UL, 200UL, 500, 300},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_0, ST4_ENABLE_PIN, ST4_INDEX_PIN, ST4_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_1, ST5_ENABLE_PIN, ST5_INDEX_PIN, ST5_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_2, ST6_ENABLE_PIN, ST6_INDEX_PIN, ST6_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_3, ST7_ENABLE_PIN, ST7_INDEX_PIN, ST7_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_0, ST8_ENABLE_PIN, ST8_INDEX_PIN, ST8_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200},
-        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_2, ST9_ENABLE_PIN, ST9_INDEX_PIN, ST9_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200}
+        dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, stepper_index[0], &encoders[0], STX_ENABLE_PIN, STX_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300}, 
+        dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, stepper_index[1], &encoders[3], STY_ENABLE_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},   // limit sensor: ; home: 
+        dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, stepper_index[2], &encoders[2], STZ_ENABLE_PIN, STZ_DIAG_PIN, 100UL, 10UL, 200UL,  500, 300},   // limit sensor: 2; home: z < -620
+        dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, stepper_index[3], 0, STC_ENABLE_PIN, STC_DIAG_PIN,  60UL,  10UL, 200UL, 500, 300},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_0, stepper_index_handler[4], 0, ST4_ENABLE_PIN,  ST4_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_1, stepper_index_handler[5], 0, ST5_ENABLE_PIN, ST5_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_2, stepper_index_handler[6], 0, ST6_ENABLE_PIN, ST6_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_3, stepper_index_handler[7], 0, ST7_ENABLE_PIN, ST7_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
+        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_0, stepper_index[8], 0, ST8_ENABLE_PIN, ST8_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200},
+        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_2, stepper_index[9], 0, ST9_ENABLE_PIN, ST9_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200}
     };
     
     io::host::log("Starting all servos");
@@ -183,10 +185,6 @@ void init()
     
     io::host::log("Starting VNCL4040");
     auto &proximity_sensor = *new VNCL4040(i2c_mux[0][3],0x60);
-    
-    io::host::log("Enabling encoders");
-    for(auto &e : encoders)
-        e.enable();
     
     
     io::host::log("Setting earpc commands");
@@ -291,9 +289,11 @@ void init()
         
         //for(int i = 0; i < 4; ++i)
         //{
-            int i = 0;
-            io::host::log("Encoder",i,": ",encoders[i].position);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        //int i=2;
+            //io::host::log("Encoder",i,": ",encoders[i].position,"; ",(int)encoders[i].state[0],' ',(int)encoders[i].state[1],' ',(int)encoders[i].state[2],' ',(int)encoders[i].state[3],' ');
+        
+            io::host::log("Position: ",encoders[0].position,", ",encoders[3].position,", ",encoders[2].position);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         //}
         //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
