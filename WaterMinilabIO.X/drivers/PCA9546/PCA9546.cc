@@ -17,16 +17,25 @@ PCA9546::channel::Write(uint16_t address, uint8_t* wdata, size_t wlength)
 bool
 PCA9546::channel::WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* rdata, size_t rlength)
 { return mux.write_read(line,address,wdata,wlength,rdata,rlength); }
+
+bool PCA9546::init()
+{
+    if(initialized)
+        return true;
+
+    uint8_t cmd = 0;
+    if(!i2c.Write(address, &cmd, 1))
+        return false;
+    
+    initialized = true;
+    return true;
+}
         
 PCA9546::PCA9546(I2C &i, uint16_t a)
     : i2c(i)
     , address(a)
     , channels{ channel{*this,0}, channel{*this,1}, channel{*this,2}, channel{*this,3} }
-{
-    uint8_t cmd = 0;
-    if(!i2c.Write(address, &cmd, 1))
-        io::host::log("Failed to initialize PCA9546");
-}
+{ init(); }
       
 bool
 PCA9546::read(uint8_t line, uint16_t address, uint8_t *data, size_t size)

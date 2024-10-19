@@ -1,5 +1,6 @@
 #ifndef DEV_PWM_HH
 # define DEV_PWM_HH
+# include <drivers/oc.hh>
 namespace dev
 {
     
@@ -14,7 +15,8 @@ public:
     
     inline void operator()(float duty)
     {
-        _.set((uint16_t)((1.f-duty)*_.period));
+        const int x = (int)_.period/1000;
+        _.set((uint16_t)(std::clamp(1.f-duty,0.f,1.f)*_.period));
     }
 
 };

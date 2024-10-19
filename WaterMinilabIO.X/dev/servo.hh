@@ -1,14 +1,9 @@
 #ifndef DEV_SERVO_HH
 # define DEV_SERVO_HH
+# include <algorithm>
 # include <cstdint>
 # include <cstddef>
-
-struct oc_type
-{
-    void(*const set)(uint16_t value);
-    size_t period;
-};
-
+# include <drivers/oc.hh>
 namespace dev
 {
 
@@ -23,7 +18,7 @@ public:
 
     inline void setAngle(float angle)
     {
-        angle += 1.f;
+        angle = std::clamp(angle,-1.f,1.f)+1.f;
         angle /= 2;
         angle *= hib-lob;
         angle += lob;

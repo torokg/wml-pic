@@ -47,10 +47,10 @@
 
 
 /* Array to store callback objects of each configured interrupt */
-static volatile GPIO_PIN_CALLBACK_OBJ portPinCbObj[24];
+static volatile GPIO_PIN_CALLBACK_OBJ portPinCbObj[16];
 
 /* Array to store number of interrupts in each PORT Channel + previous interrupt count */
-static uint8_t portNumCb[10 + 1] = { 0, 2, 2, 4, 10, 10, 10, 12, 14, 21, 24, };
+static uint8_t portNumCb[10 + 1] = { 0, 1, 1, 3, 6, 6, 6, 8, 11, 14, 16, };
 
 /******************************************************************************
   Function:
@@ -134,7 +134,7 @@ void GPIO_Initialize ( void )
     IEC3SET = _IEC3_CNJIE_MASK;
     /* PORTK Initialization */
     LATK = 0x43U; /* Initial Latch Value */
-    TRISKCLR = 0x43U; /* Direction Control */
+    TRISKCLR = 0xc3U; /* Direction Control */
 
     /* Change Notice Enable */
     CNCONKSET = _CNCONK_ON_MASK;
@@ -185,55 +185,39 @@ void GPIO_Initialize ( void )
 
     uint32_t i;
     /* Initialize Interrupt Pin data structures */
-    portPinCbObj[10 + 0].pin = GPIO_PIN_RG15;
+    portPinCbObj[6 + 0].pin = GPIO_PIN_RG15;
     
-    portPinCbObj[2 + 0].pin = GPIO_PIN_RC1;
+    portPinCbObj[1 + 0].pin = GPIO_PIN_RC1;
     
-    portPinCbObj[2 + 1].pin = GPIO_PIN_RC2;
+    portPinCbObj[1 + 1].pin = GPIO_PIN_RC2;
     
-    portPinCbObj[14 + 0].pin = GPIO_PIN_RJ13;
+    portPinCbObj[11 + 0].pin = GPIO_PIN_RJ13;
     
-    portPinCbObj[12 + 0].pin = GPIO_PIN_RH2;
+    portPinCbObj[8 + 0].pin = GPIO_PIN_RH2;
     
-    portPinCbObj[21 + 0].pin = GPIO_PIN_RK3;
+    portPinCbObj[14 + 0].pin = GPIO_PIN_RK3;
     
-    portPinCbObj[12 + 1].pin = GPIO_PIN_RH4;
+    portPinCbObj[8 + 1].pin = GPIO_PIN_RH4;
     
-    portPinCbObj[4 + 0].pin = GPIO_PIN_RD14;
+    portPinCbObj[3 + 0].pin = GPIO_PIN_RD14;
     
-    portPinCbObj[21 + 1].pin = GPIO_PIN_RK4;
+    portPinCbObj[14 + 1].pin = GPIO_PIN_RK4;
     
-    portPinCbObj[4 + 1].pin = GPIO_PIN_RD11;
+    portPinCbObj[3 + 1].pin = GPIO_PIN_RD11;
     
-    portPinCbObj[4 + 2].pin = GPIO_PIN_RD12;
+    portPinCbObj[8 + 2].pin = GPIO_PIN_RH15;
     
-    portPinCbObj[4 + 3].pin = GPIO_PIN_RD13;
+    portPinCbObj[3 + 2].pin = GPIO_PIN_RD12;
     
-    portPinCbObj[14 + 1].pin = GPIO_PIN_RJ0;
+    portPinCbObj[11 + 1].pin = GPIO_PIN_RJ3;
     
-    portPinCbObj[14 + 2].pin = GPIO_PIN_RJ3;
+    portPinCbObj[0 + 0].pin = GPIO_PIN_RA7;
     
-    portPinCbObj[4 + 4].pin = GPIO_PIN_RD6;
+    portPinCbObj[11 + 2].pin = GPIO_PIN_RJ7;
     
-    portPinCbObj[4 + 5].pin = GPIO_PIN_RD7;
+    portPinCbObj[6 + 1].pin = GPIO_PIN_RG12;
     
-    portPinCbObj[21 + 2].pin = GPIO_PIN_RK7;
-    
-    portPinCbObj[0 + 0].pin = GPIO_PIN_RA6;
-    
-    portPinCbObj[0 + 1].pin = GPIO_PIN_RA7;
-    
-    portPinCbObj[14 + 3].pin = GPIO_PIN_RJ4;
-    
-    portPinCbObj[14 + 4].pin = GPIO_PIN_RJ5;
-    
-    portPinCbObj[14 + 5].pin = GPIO_PIN_RJ6;
-    
-    portPinCbObj[14 + 6].pin = GPIO_PIN_RJ7;
-    
-    portPinCbObj[10 + 1].pin = GPIO_PIN_RG12;
-    
-    for(i=0U; i<24U; i++)
+    for(i=0U; i<16U; i++)
     {
         portPinCbObj[i].callback = NULL;
     }
@@ -531,33 +515,6 @@ bool GPIO_PinInterruptCallbackRegister(
   Remarks:
     It is an internal function called from ISR, user should not call it directly.
 */
-    
-void __attribute__((used)) CHANGE_NOTICE_A_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
-
-    status  = CNSTATA;
-    status &= CNENA;
-
-    PORTA;
-    IFS3CLR = _IFS3_CNAIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 0; i < 2; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
 
 // *****************************************************************************
 /* Function:
@@ -584,7 +541,7 @@ void __attribute__((used)) CHANGE_NOTICE_C_InterruptHandler(void)
     IFS3CLR = _IFS3_CNCIF_MASK;
 
     /* Check pending events and call callback if registered */
-    for(i = 2; i < 4; i++)
+    for(i = 1; i < 3; i++)
     {
         pin = portPinCbObj[i].pin;
 
@@ -622,7 +579,7 @@ void __attribute__((used)) CHANGE_NOTICE_D_InterruptHandler(void)
     IFS3CLR = _IFS3_CNDIF_MASK;
 
     /* Check pending events and call callback if registered */
-    for(i = 4; i < 10; i++)
+    for(i = 3; i < 6; i++)
     {
         pin = portPinCbObj[i].pin;
 
@@ -660,7 +617,7 @@ void __attribute__((used)) CHANGE_NOTICE_G_InterruptHandler(void)
     IFS3CLR = _IFS3_CNGIF_MASK;
 
     /* Check pending events and call callback if registered */
-    for(i = 10; i < 12; i++)
+    for(i = 6; i < 8; i++)
     {
         pin = portPinCbObj[i].pin;
 
@@ -683,71 +640,7 @@ void __attribute__((used)) CHANGE_NOTICE_G_InterruptHandler(void)
   Remarks:
     It is an internal function called from ISR, user should not call it directly.
 */
-    
-void __attribute__((used)) CHANGE_NOTICE_H_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
 
-    status  = CNSTATH;
-    status &= CNENH;
-
-    PORTH;
-    IFS3CLR = _IFS3_CNHIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 12; i < 14; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
-
-// *****************************************************************************
-/* Function:
-    void CHANGE_NOTICE_J_InterruptHandler(void)
-
-  Summary:
-    Interrupt Handler for change notice interrupt for channel J.
-
-  Remarks:
-    It is an internal function called from ISR, user should not call it directly.
-*/
-    
-void __attribute__((used)) CHANGE_NOTICE_J_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
-
-    status  = CNSTATJ;
-    status &= CNENJ;
-
-    PORTJ;
-    IFS3CLR = _IFS3_CNJIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 14; i < 21; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
 
 // *****************************************************************************
 /* Function:
@@ -774,7 +667,7 @@ void __attribute__((used)) CHANGE_NOTICE_K_InterruptHandler(void)
     IFS3CLR = _IFS3_CNKIF_MASK;
 
     /* Check pending events and call callback if registered */
-    for(i = 21; i < 24; i++)
+    for(i = 14; i < 16; i++)
     {
         pin = portPinCbObj[i].pin;
 

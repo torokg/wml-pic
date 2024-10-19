@@ -10,11 +10,13 @@
 #include <drivers/PCA9546.h>
 #include <drivers/A31301.h>
 #include <drivers/VNCL4040.h>
+#include <drivers/encoder.h>
 #include <dev/stepper.hh>
 #include <dev/servo.hh>
 #include <dev/valve.hh>
 #include <dev/pwm.hh>
 #include <dev/bdc.hh>
+
 
 template<typename T>
 struct value_set_t
@@ -75,8 +77,8 @@ void init()
         oc_type{OCMP1_CompareValueSet, 37499},
         oc_type{OCMP9_CompareValueSet, 37499},
         oc_type{OCMP5_CompareValueSet, 37499},
-        oc_type{OCMP3_CompareValueSet, 49998},
-        oc_type{OCMP4_CompareValueSet, 49998},
+        oc_type{OCMP3_CompareValueSet, 50000},
+        oc_type{OCMP4_CompareValueSet, 50000},
     };
     
     auto &spi = *new std::array<SPI,3>{
@@ -97,8 +99,10 @@ void init()
     TMR3_Start();
     TMR3_InterruptEnable();
     
+    io::host::log("Starting MCP23S17");
     auto &portexp = *new MCP23S17(spi[1], SPI5_CS_PIN, SPI5_RESET_PIN);
             
+    io::host::log("Starting all TMC2209");
     auto &stepper = *new std::array<dev::stepper,6> {
         dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, STX_ENABLE_PIN, STX_INDEX_PIN, STX_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300}, 
         dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, STY_ENABLE_PIN, STY_INDEX_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},   // limit sensor: ; home: 
@@ -112,17 +116,20 @@ void init()
         dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_2, ST9_ENABLE_PIN, ST9_INDEX_PIN, ST9_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200}
     };
     
+    io::host::log("Starting all servos");
     auto &servo = *new std::array<dev::servo, 3> {
         dev::servo{oc[0], 1.0f/6, 0.4},
         dev::servo{oc[1], 1.0f/6, 5.0f/6},
         dev::servo{oc[2], 1.0f/6, 5.0f/6}
     };
     
+    io::host::log("Starting all pwm outputs");
     auto &pwm = *new std::array<dev::pwm,2>{
         dev::pwm{oc[3]},
         dev::pwm{oc[4]}
     };
     
+    io::host::log("Starting all valve controls");
     auto &valve = *new std::array<dev::valve, 12>{
         dev::valve{portexp,0},
         dev::valve{portexp,1},
@@ -138,6 +145,7 @@ void init()
         dev::valve{portexp,11},
     };
     
+    io::host::log("Starting all bdc controllers");
     auto &bdc = *new std::array<dev::bdc, 4> {
         dev::bdc{spi[0],SPI2_CS0_PIN},
         dev::bdc{spi[0],SPI2_CS1_PIN},
@@ -146,31 +154,42 @@ void init()
     };
     
     
+    io::host::log("Starting all PCA9536");
     auto &i2c_portexp = *new std::array<PCA9536,2>{
         PCA9536{i2c[0],0b1000001},
         PCA9536{i2c[1],0b1000001}
     };
     
+    io::host::log("Starting all PCA9546");
     auto &i2c_mux = *new std::array<PCA9546,2>{
         PCA9546{i2c[0],0b1110000},
         PCA9546{i2c[1],0b1110000}
     };
     
+    io::host::log("Turning on i2c hub 0");
     if(!i2c_portexp[0].value(0))
         io::host::log("Failed to turn on i2c hub 0");
     
+    io::host::log("Turning on i2c hub 1");
     if(!i2c_portexp[1].value(0))
         io::host::log("Failed to turn on i2c hub 1");
     
+    io::host::log("Starting all A31301");
     auto &limit_sensor = *new std::array<A31301, 3>{
         A31301{i2c_mux[0][0],0x6c},
         A31301{i2c_mux[0][1],0x6c},
         A31301{i2c_mux[0][2],0x6c},
     };
     
+    io::host::log("Starting VNCL4040");
     auto &proximity_sensor = *new VNCL4040(i2c_mux[0][3],0x60);
     
-    //io::host::log("Setting earpc commands");
+    io::host::log("Enabling encoders");
+    for(auto &e : encoders)
+        e.enable();
+    
+    
+    io::host::log("Setting earpc commands");
     
     
     //reboot
@@ -231,8 +250,9 @@ void init()
             r.respond(false);
         else
         {
-            r.respond(true);
             pwm[x.item](x.value);
+            r.respond(true);
+
         }
     });
     
@@ -242,22 +262,19 @@ void init()
         if(x.item >= bdc.size())
             r.respond(false);
         else
-        {
-            r.respond(true);
-            bdc[x.item](x.value);
-        }
+            r.respond(bdc[x.item](x.value));
     });
     
-    
+    io::host::log("Starting loop");
     while(true)
     {
-        //uint16_t rd;
-        //if(proximity_sensor.read(rd))
-        //    io::host::log("Proximity: ",rd);
-        //else
-        //    io::host::log("Proximity read failed");
-        
-        for(int i = 0; i < 3; ++i)
+/*        uint16_t rd;
+        if(proximity_sensor.read(rd))
+            io::host::log("Proximity: ",rd);
+        else
+            io::host::log("Proximity read failed");
+  */      
+        /*for(int i = 0; i < 3; ++i)
         {
             A31301::result lr;
             memset(&lr,0,sizeof(A31301::result));
@@ -267,11 +284,17 @@ void init()
                 );
             //else
             //    io::host::log("Limit ",i," read failed");
-        }
+        }*/
         
         //tx_semaphore_get(&sem_index,TX_WAIT_FOREVER);
         //auto sgr = stepper[0].getStallGuardResult();
-        //io::host::log("STY index count: ",sty_index_count,"; stall guard result: ",sgr);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        
+        //for(int i = 0; i < 4; ++i)
+        //{
+            int i = 0;
+            io::host::log("Encoder",i,": ",encoders[i].position);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        //}
+        //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }

@@ -53,6 +53,7 @@
 #endif
 // DOM-IGNORE-END
 
+extern volatile int OCMP4_Active;
 
 // *****************************************************************************
 // Section: Interface

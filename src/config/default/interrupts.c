@@ -97,12 +97,10 @@ void SPI6_TX_Handler (void);
 void UART6_FAULT_Handler (void);
 void UART6_RX_Handler (void);
 void UART6_TX_Handler (void);
-void CHANGE_NOTICE_A_Handler (void);
 void CHANGE_NOTICE_C_Handler (void);
 void CHANGE_NOTICE_D_Handler (void);
 void CHANGE_NOTICE_G_Handler (void);
 void CHANGE_NOTICE_H_Handler (void);
-void CHANGE_NOTICE_J_Handler (void);
 void CHANGE_NOTICE_K_Handler (void);
 
 // *****************************************************************************
@@ -111,15 +109,6 @@ void CHANGE_NOTICE_K_Handler (void);
 // *****************************************************************************
 // *****************************************************************************
 
-void __ISR(_TIMER_2_VECTOR, ipl1SRS) TIMER_2_Handler (void)
-{
-    TIMER_2_InterruptHandler();
-}
-
-void __ISR(_TIMER_3_VECTOR, ipl1SRS) TIMER_3_Handler (void)
-{
-    TIMER_3_InterruptHandler();
-}
 
 void __ISR(_UART1_FAULT_VECTOR, ipl1SAVEALL) UART1_FAULT_Handler (void)
 {
@@ -247,12 +236,6 @@ void __ISR(_UART6_TX_VECTOR, ipl1SAVEALL) UART6_TX_Handler (void)
     _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_A_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_A_Handler (void)
-{
-    _tx_thread_context_save();
-    CHANGE_NOTICE_A_InterruptHandler();
-    _tx_thread_context_restore();
-}
 
 void __ISR(_CHANGE_NOTICE_C_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_C_Handler (void)
 {
@@ -275,23 +258,31 @@ void __ISR(_CHANGE_NOTICE_G_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_G_Handler (void)
     _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_H_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_H_Handler (void)
+void __ISR(_CHANGE_NOTICE_K_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_K_Handler (void)
 {
     _tx_thread_context_save();
-    CHANGE_NOTICE_H_InterruptHandler();
+    CHANGE_NOTICE_K_InterruptHandler();
     _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_J_VECTOR, ipl1SRS) CHANGE_NOTICE_J_Handler (void)
-{
-    CHANGE_NOTICE_J_InterruptHandler();
-}
 
-void __ISR(_CHANGE_NOTICE_K_VECTOR, ipl1SRS) CHANGE_NOTICE_K_Handler (void)
-{
-    CHANGE_NOTICE_K_InterruptHandler();
-}
+/// High priority interrupts ///
 
+void __ISR(_TIMER_2_VECTOR, ipl2SRS) TIMER_2_Handler (void)
+{ TIMER_2_InterruptHandler(); }
+
+void __ISR(_TIMER_3_VECTOR, ipl2SRS) TIMER_3_Handler (void)
+{ TIMER_3_InterruptHandler(); }
+
+void __ISR(_CHANGE_NOTICE_A_VECTOR, ipl2SRS) CHANGE_NOTICE_A_Handler (void)
+{ CHANGE_NOTICE_A_InterruptHandler(); }
+
+void __ISR(_CHANGE_NOTICE_H_VECTOR, ipl2SRS) CHANGE_NOTICE_H_Handler (void)
+{ CHANGE_NOTICE_H_InterruptHandler(); }
+
+
+void __ISR(_CHANGE_NOTICE_J_VECTOR, ipl2SRS) CHANGE_NOTICE_J_Handler (void)
+{ CHANGE_NOTICE_J_InterruptHandler(); }
 
 
 

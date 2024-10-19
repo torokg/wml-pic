@@ -54,11 +54,11 @@ volatile static SPI_OBJECT spi2Obj;
 
 #define SPI2_CON_MSTEN                      (1UL << _SPI2CON_MSTEN_POSITION)
 #define SPI2_CON_CKP                        (0UL << _SPI2CON_CKP_POSITION)
-#define SPI2_CON_CKE                        (1UL << _SPI2CON_CKE_POSITION)
+#define SPI2_CON_CKE                        (0UL << _SPI2CON_CKE_POSITION)
 #define SPI2_CON_MODE_32_MODE_16            (0UL << _SPI2CON_MODE16_POSITION)
 #define SPI2_CON_ENHBUF                     (1UL << _SPI2CON_ENHBUF_POSITION)
 #define SPI2_CON_MCLKSEL                    (0UL << _SPI2CON_MCLKSEL_POSITION)
-#define SPI2_CON_MSSEN                      (1UL << _SPI2CON_MSSEN_POSITION)
+#define SPI2_CON_MSSEN                      (0UL << _SPI2CON_MSSEN_POSITION)
 #define SPI2_CON_SMP                        (0UL << _SPI2CON_SMP_POSITION)
 
 
@@ -111,10 +111,10 @@ void SPI2_Initialize ( void )
     /*
     MSTEN = 1
     CKP = 0
-    CKE = 1
+    CKE = 0
     MODE<32,16> = 0
     ENHBUF = 1
-    MSSEN = 1
+    MSSEN = 0
     MCLKSEL = 0
     */
     SPI2CONSET = (SPI2_CON_MSSEN | SPI2_CON_MCLKSEL | SPI2_CON_ENHBUF | SPI2_CON_MODE_32_MODE_16 | SPI2_CON_CKE | SPI2_CON_CKP | SPI2_CON_MSTEN | SPI2_CON_SMP);
@@ -276,7 +276,7 @@ bool SPI2_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, siz
             }
             else if (spi2Obj.dummySize > 0U)
             {
-                SPI2BUF = (uint32_t)(0xffU);
+                SPI2BUF = (uint32_t)(0x0U);
                 spi2Obj.dummySize--;
             }
             else
@@ -298,7 +298,7 @@ bool SPI2_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, siz
             }
             else if (spi2Obj.dummySize > 0U)
             {
-                SPI2BUF = (uint16_t)(0xffU);
+                SPI2BUF = (uint16_t)(0x0U);
                 spi2Obj.dummySize--;
             }
             else
@@ -315,7 +315,7 @@ bool SPI2_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, siz
             }
             else if (spi2Obj.dummySize > 0U)
             {
-                SPI2BUF = (uint8_t)(0xffU);
+                SPI2BUF = (uint8_t)(0x0U);
                 spi2Obj.dummySize--;
             }
             else
@@ -421,7 +421,7 @@ void __attribute__((used)) SPI2_RX_InterruptHandler (void)
                 }
                 else if (spi2Obj.dummySize > 0U)
                 {
-                    SPI2BUF = (uint32_t)(0xffU);
+                    SPI2BUF = (uint32_t)(0x0U);
                     spi2Obj.dummySize--;
                 }
                 else
@@ -438,7 +438,7 @@ void __attribute__((used)) SPI2_RX_InterruptHandler (void)
                 }
                 else if (spi2Obj.dummySize > 0U)
                 {
-                    SPI2BUF = (uint16_t)(0xffU);
+                    SPI2BUF = (uint16_t)(0x0U);
                     spi2Obj.dummySize--;
                 }
                 else
@@ -455,7 +455,7 @@ void __attribute__((used)) SPI2_RX_InterruptHandler (void)
                 }
                 else if (spi2Obj.dummySize > 0U)
                 {
-                    SPI2BUF = (uint8_t)(0xffU);
+                    SPI2BUF = (uint8_t)(0x0U);
                     spi2Obj.dummySize--;
                 }
                 else

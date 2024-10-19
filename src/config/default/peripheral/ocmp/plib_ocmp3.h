@@ -52,7 +52,7 @@
     extern "C" {
 #endif
 // DOM-IGNORE-END
-
+extern volatile int OCMP3_Active;
 
 // *****************************************************************************
 // Section: Interface

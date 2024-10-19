@@ -12,6 +12,9 @@ class PCA9546
     I2C &i2c;
     const uint16_t address;
     std::mutex lk;
+    volatile bool initialized;
+    
+    bool init();
     
     template<auto F, typename... Ts>
     inline bool _operate(uint8_t line, Ts&&... vs)
@@ -20,14 +23,22 @@ class PCA9546
             return false;
         
         std::unique_lock ul(lk);
+        
+        if(!init())
+            return false;
+        
         uint8_t cmd = ((1<<line)&0xf);
         if(!i2c.Write(address, &cmd, 1))
+        {
+            initialized = false;
             return false;
+        }
 
         bool rv = (i2c.*F)(std::forward<Ts>(vs)...);
         
         cmd = 0;
-        i2c.Write(address, &cmd, 1);
+        if(!i2c.Write(address, &cmd, 1))
+            initialized = false;
         
         return rv;
     }

@@ -122,9 +122,16 @@ void __attribute__((used)) TIMER_3_InterruptHandler (void)
     uint32_t status  = 0U;
     status = IFS0bits.T3IF;
     IFS0CLR = _IFS0_T3IF_MASK;
-
-    OCMP3_Enable();    
+    
+    OCMP3_Enable();
     OCMP4_Enable();
+   
+    uint32_t v = TMR3;
+    if(v >= OC3R && (OC3CON&_OC3CON_ON_MASK))
+        OC3R = v+PR3/(TMR3_FrequencyGet()/100000);
+    if(v >= OC4R && (OC4CON&_OC4CON_ON_MASK))
+        OC4R = v+PR3/(TMR3_FrequencyGet()/100000);
+    
 }
 
 void TMR3_InterruptEnable(void)

@@ -57,6 +57,7 @@
 // *****************************************************************************
 // *****************************************************************************
 
+void TIMER_1_InterruptHandler( void );
 void TIMER_2_InterruptHandler( void );
 void TIMER_3_InterruptHandler( void );
 void SPI1_FAULT_InterruptHandler( void );

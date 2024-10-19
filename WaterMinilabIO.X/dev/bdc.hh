@@ -13,12 +13,12 @@ namespace dev
             : TLE9201(s,c)
         {}
                 
-        void operator()(float duty)
+        bool operator()(float duty)
         {
             if(abs(duty) >= .5f)
-                start(duty > 0);
+                return start(duty > 0);
             else
-                stop();
+                return stop();
         }
     };
 }

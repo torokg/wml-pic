@@ -189,6 +189,9 @@
         <logicalFolder name="A31301" displayName="A31301" projectFiles="true">
           <itemPath>drivers/A31301/A31301.cc</itemPath>
         </logicalFolder>
+        <logicalFolder name="encoder" displayName="encoder" projectFiles="true">
+          <itemPath>drivers/encoder/encoder.cc</itemPath>
+        </logicalFolder>
         <logicalFolder name="MCP23S17" displayName="MCP23S17" projectFiles="true">
           <itemPath>drivers/MCP23S17/MCP23S17.cc</itemPath>
         </logicalFolder>
@@ -216,6 +219,8 @@
         <itemPath>drivers/A31301.h</itemPath>
         <itemPath>drivers/VNCL4040.h</itemPath>
         <itemPath>drivers/PCA9536.h</itemPath>
+        <itemPath>drivers/oc.hh</itemPath>
+        <itemPath>drivers/encoder.h</itemPath>
       </logicalFolder>
       <logicalFolder name="earpc" displayName="earpc" projectFiles="true">
         <logicalFolder name="buffer" displayName="buffer" projectFiles="true">

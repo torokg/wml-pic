@@ -1,5 +1,6 @@
 #ifndef NET_ALGORITHM_H
 # define NET_ALGORITHM_H
+# include <algorithm>
 # include <types/integer.hh>
 namespace net::algorithm
 {
