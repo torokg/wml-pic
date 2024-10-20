@@ -1,6 +1,7 @@
 #include <array>
 #include <thread>
 #include <mutex>
+#include <limits>
 #include <condition_variable>
 #include "definitions.h"
 #include <io/host/service.hh>
@@ -9,22 +10,16 @@
 #include <drivers/MCP23S17.h>
 #include <drivers/PCA9536.h>
 #include <drivers/PCA9546.h>
-#include <drivers/A31301.h>
 #include <drivers/VNCL4040.h>
+#include <drivers/LimitSensor.hh>
 #include <drivers/encoder.h>
 #include <dev/stepper.hh>
 #include <dev/servo.hh>
 #include <dev/valve.hh>
 #include <dev/pwm.hh>
 #include <dev/bdc.hh>
+#include <argtypes.hh>
 
-
-template<typename T>
-struct value_set_t
-{
-    T value;
-    uint8_t item;
-};
 
 
 template<typename... Ts>
@@ -103,20 +98,37 @@ void init()
     io::host::log("Starting MCP23S17");
     auto &portexp = *new MCP23S17(spi[1], SPI5_CS_PIN, SPI5_RESET_PIN);
     
-             
-    io::host::log("Starting all TMC2209");
-    auto &stepper = *new std::array<dev::stepper,6> {
-        dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, stepper_index[0], &encoders[0], STX_ENABLE_PIN, STX_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300}, 
-        dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, stepper_index[1], &encoders[3], STY_ENABLE_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},   // limit sensor: ; home: 
-        dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, stepper_index[2], &encoders[2], STZ_ENABLE_PIN, STZ_DIAG_PIN, 100UL, 10UL, 200UL,  500, 300},   // limit sensor: 2; home: z < -620
-        dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, stepper_index[3], 0, STC_ENABLE_PIN, STC_DIAG_PIN,  60UL,  10UL, 200UL, 500, 300},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_0, stepper_index_handler[4], 0, ST4_ENABLE_PIN,  ST4_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_1, stepper_index_handler[5], 0, ST5_ENABLE_PIN, ST5_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_2, stepper_index_handler[6], 0, ST6_ENABLE_PIN, ST6_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        //{uart[5], TMC2209::SERIAL_ADDRESS_3, stepper_index_handler[7], 0, ST7_ENABLE_PIN, ST7_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 10000},
-        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_0, stepper_index[8], 0, ST8_ENABLE_PIN, ST8_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200},
-        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_2, stepper_index[9], 0, ST9_ENABLE_PIN, ST9_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200}
+    
+    io::host::log("Starting all PCA9536");
+    auto &i2c_portexp = *new std::array<PCA9536,2>{
+        PCA9536{i2c[0],0b1000001},
+        PCA9536{i2c[1],0b1000001}
     };
+    
+    io::host::log("Starting all PCA9546");
+    auto &i2c_mux = *new std::array<PCA9546,2>{
+        PCA9546{i2c[0],0b1110000},
+        PCA9546{i2c[1],0b1110000}
+    };
+    
+    io::host::log("Turning on i2c hub 0");
+    if(!i2c_portexp[0].value(0))
+        io::host::log("Failed to turn on i2c hub 0");
+    
+    io::host::log("Turning on i2c hub 1");
+    if(!i2c_portexp[1].value(0))
+        io::host::log("Failed to turn on i2c hub 1");
+    
+    io::host::log("Starting all limit sensors");
+    auto &limit_sensor = *new std::array<LimitSensor, 3>{
+        LimitSensor{i2c_mux[0][0],0x6c, 2, 600},
+        LimitSensor{i2c_mux[0][1],0x6c, 2, 350},
+        LimitSensor{i2c_mux[0][2],0x6c, 2, 600},
+    };
+
+    io::host::log("Starting VNCL4040");
+    auto &proximity_sensor = *new VNCL4040(i2c_mux[0][3],0x60);
+ 
     
     io::host::log("Starting all servos");
     auto &servo = *new std::array<dev::servo, 3> {
@@ -155,37 +167,25 @@ void init()
         dev::bdc{spi[0],SPI2_CS3_PIN},
     };
     
+    io::host::log("Starting all TMC2209");
     
-    io::host::log("Starting all PCA9536");
-    auto &i2c_portexp = *new std::array<PCA9536,2>{
-        PCA9536{i2c[0],0b1000001},
-        PCA9536{i2c[1],0b1000001}
+    auto &stepper_finish_callback = *new std::array<std::function<void()>,10>;
+    
+    for(uint8_t i = 0; i < stepper_finish_callback.size(); ++i)
+        stepper_finish_callback[i] = [i]{ io::host::default_earpc::call<bool,uint8_t>(0,100,i,[](auto r){}); };
+            
+    auto &stepper = *new std::array<dev::stepper,6> {
+        dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, stepper_index[0], &encoders[0], &limit_sensor[0], stepper_finish_callback[0], STX_ENABLE_PIN, STX_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300}, 
+        dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, stepper_index[1], &encoders[3], &limit_sensor[1], stepper_finish_callback[1], STY_ENABLE_PIN, STY_DIAG_PIN,  90UL,  9UL, 200UL, 1000, 300},   // limit sensor: ; home: 
+        dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, stepper_index[2], &encoders[2], &limit_sensor[2], stepper_finish_callback[2], STZ_ENABLE_PIN, STZ_DIAG_PIN, 100UL, 10UL, 200UL, 1000, 300},   // limit sensor: 2; home: z < -620
+        dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, stepper_index[3], 0, 0, stepper_finish_callback[3], STC_ENABLE_PIN, STC_DIAG_PIN,  60UL,  10UL, 200UL, 500, 300},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_0, stepper_index_handler[4], stepper_finish_callback[4], 0, 0, ST4_ENABLE_PIN,  ST4_DIAG_PIN, finish_callback[0],  40UL,  40UL, 200UL, 2000, 10000},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_1, stepper_index_handler[5], stepper_finish_callback[5], 0, 0, ST5_ENABLE_PIN, ST5_DIAG_PIN, finish_callback[0],  40UL,  40UL, 200UL, 2000, 10000},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_2, stepper_index_handler[6], stepper_finish_callback[6], 0, 0, ST6_ENABLE_PIN, ST6_DIAG_PIN, finish_callback[0],  40UL,  40UL, 200UL, 2000, 10000},
+        //{uart[5], TMC2209::SERIAL_ADDRESS_3, stepper_index_handler[7], stepper_finish_callback[7], 0, 0, ST7_ENABLE_PIN, ST7_DIAG_PIN, finish_callback[0],  40UL,  40UL, 200UL, 2000, 10000},
+        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_0, stepper_index[8], 0, 0, stepper_finish_callback[4], ST8_ENABLE_PIN, ST8_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200},
+        dev::stepper{uart[4], TMC2209::SERIAL_ADDRESS_2, stepper_index[9], 0, 0, stepper_finish_callback[5], ST9_ENABLE_PIN, ST9_DIAG_PIN,  40UL,  40UL, 200UL, 2000, 200}
     };
-    
-    io::host::log("Starting all PCA9546");
-    auto &i2c_mux = *new std::array<PCA9546,2>{
-        PCA9546{i2c[0],0b1110000},
-        PCA9546{i2c[1],0b1110000}
-    };
-    
-    io::host::log("Turning on i2c hub 0");
-    if(!i2c_portexp[0].value(0))
-        io::host::log("Failed to turn on i2c hub 0");
-    
-    io::host::log("Turning on i2c hub 1");
-    if(!i2c_portexp[1].value(0))
-        io::host::log("Failed to turn on i2c hub 1");
-    
-    io::host::log("Starting all A31301");
-    auto &limit_sensor = *new std::array<A31301, 3>{
-        A31301{i2c_mux[0][0],0x6c},
-        A31301{i2c_mux[0][1],0x6c},
-        A31301{i2c_mux[0][2],0x6c},
-    };
-    
-    io::host::log("Starting VNCL4040");
-    auto &proximity_sensor = *new VNCL4040(i2c_mux[0][3],0x60);
-    
     
     io::host::log("Setting earpc commands");
     
@@ -216,7 +216,42 @@ void init()
             r.respond(true);
         }
     });
-        
+    
+    //Set stepper freewheel state
+    io::host::default_earpc::set_command<bool,value_set_t<bool> >(101,[&stepper](auto r) {
+        auto x = r.value();
+        if(x.item >= stepper.size())
+            r.respond(false);
+        else
+        {
+            stepper[x.item].setFreewheel(x.value);
+            r.respond(true);
+        }
+    });
+    
+    // Reset stepper position
+    io::host::default_earpc::set_command<bool,uint8_t>(102,[&stepper](auto r) {
+        auto item = r.value();
+        if(item >= stepper.size())
+            r.respond(false);
+        else
+        {
+            stepper[item].resetPosition();
+            r.respond(true);
+        }
+    });
+    
+    // Get stepper position
+    io::host::default_earpc::set_command<int32_t,uint8_t>(105,[&stepper](auto r) {
+        auto item = r.value();
+        if(item >= stepper.size())
+            r.respond(std::numeric_limits<int32_t>::min());
+        else
+        { r.respond(stepper[item].getPosition()); }
+    });
+    
+    
+    
     //set servo to angle
     io::host::default_earpc::set_command<bool,value_set_t<float> >(110,[&servo](auto r) {
         auto x = r.value();
@@ -262,17 +297,39 @@ void init()
         else
             r.respond(bdc[x.item](x.value));
     });
+        
+    //get proximity
+    io::host::default_earpc::set_command<int16_t,bool>(200,[&proximity_sensor](auto r) {
+        int16_t rv = -1;
+        if(proximity_sensor.read((uint16_t&)rv))
+        {
+            if(rv < 0)
+                rv = std::numeric_limits<int16_t>::max();
+            r.respond(rv);
+        }
+        else
+            r.respond(-1);
+    });
+    
+    //get limits
+    io::host::default_earpc::set_command<uint8_t,bool>(201,[&limit_sensor](auto r) {
+        uint8_t rv = 0;
+        for(int i=0; i < limit_sensor.size(); ++i)
+            rv += limit_sensor[i]()?(1<<i):0;
+        
+        r.respond(rv);
+    });
     
     io::host::log("Starting loop");
     while(true)
     {
-/*        uint16_t rd;
-        if(proximity_sensor.read(rd))
+        uint16_t rd;
+        /*if(proximity_sensor.read(rd))
             io::host::log("Proximity: ",rd);
         else
             io::host::log("Proximity read failed");
-  */      
-        /*for(int i = 0; i < 3; ++i)
+        */
+/*        for(int i = 0; i < 3; ++i)
         {
             A31301::result lr;
             memset(&lr,0,sizeof(A31301::result));
@@ -280,21 +337,18 @@ void init()
                 io::host::log("Limit ",i,": ", lr.x ,'\t', lr.y, '\t',lr.z
                         //distance(limit_result.x,limit_result.y,limit_result.z)
                 );
-            //else
-            //    io::host::log("Limit ",i," read failed");
-        }*/
-        
+            else
+                io::host::log("Limit ",i," read failed");
+        }
+*/      
         //tx_semaphore_get(&sem_index,TX_WAIT_FOREVER);
         //auto sgr = stepper[0].getStallGuardResult();
         
-        //for(int i = 0; i < 4; ++i)
-        //{
-        //int i=2;
-            //io::host::log("Encoder",i,": ",encoders[i].position,"; ",(int)encoders[i].state[0],' ',(int)encoders[i].state[1],' ',(int)encoders[i].state[2],' ',(int)encoders[i].state[3],' ');
-        
-            io::host::log("Position: ",encoders[0].position,", ",encoders[3].position,", ",encoders[2].position);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            //io::host::log("P: ",encoders[0].position,", ",encoders[3].position,", ",encoders[2].position);
+            //io::host::log("Limit: ", limit_sensor[0](),", ",limit_sensor[1](),", ",limit_sensor[2]());
+            
+            //std::this_thread::sleep_for(std::chrono::milliseconds(20));
         //}
-        //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }

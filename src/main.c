@@ -31,7 +31,7 @@
 
 long long debug_long0 = -1, debug_long1 = -1;
 
-#define stack_pool_size 5000
+#define stack_pool_size 10000
 static char stack_pool_data[stack_pool_size];
 
 static TX_BYTE_POOL stack_pool;
@@ -51,7 +51,7 @@ static TX_THREAD  main_thread;
 void tx_application_define(void *first_unused_memory)
 {
     char *main_thread_stack = TX_NULL;
-    const size_t main_thread_stack_size = 4096;
+    const size_t main_thread_stack_size = 8192;
     
     /* Create a byte memory pool from which to allocate the thread stacks.  */
     tx_byte_pool_create(&stack_pool, "stack pool", stack_pool_data, stack_pool_size);

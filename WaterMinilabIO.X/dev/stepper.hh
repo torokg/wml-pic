@@ -2,6 +2,7 @@
 # define DEV_STEPPER_HH
 # include <drivers/TMC2209.h>
 # include <drivers/encoder.h>
+# include <drivers/LimitSensor.hh>
 
     
 struct stepper_index_handler
@@ -46,6 +47,8 @@ class stepper
     std::mutex   target_index_lk;
     stepper_index_handler &index;
     Encoder *encoder;
+    LimitSensor *limit;
+    std::function<void()> finish_callback;
     volatile size_t  last_index_count;
     volatile int32_t target_index;
     volatile int32_t current_index;
@@ -62,7 +65,7 @@ class stepper
             
 public:
     
-    stepper(HardwareSerial &serial, TMC2209::SerialAddress address, stepper_index_handler &index, Encoder *enc, GPIO_PIN penable, GPIO_PIN pdiag, uint8_t runCurrent, uint8_t holdCurrent, size_t spr, size_t mrpm, size_t macc);
+    stepper(HardwareSerial &serial, TMC2209::SerialAddress address, stepper_index_handler &index, Encoder *enc, LimitSensor *lim, std::function<void()> fcb, GPIO_PIN penable, GPIO_PIN pdiag, uint8_t runCurrent, uint8_t holdCurrent, size_t spr, size_t mrpm, size_t macc);
 
     void init();
     
@@ -72,6 +75,12 @@ public:
         target_index = v;
         tx_semaphore_ceiling_put(&sem_notify,1);
     }
+    
+    void setFreewheel(bool v);
+    
+    int32_t getPosition();
+    
+    void resetPosition();
 };   
 
 }

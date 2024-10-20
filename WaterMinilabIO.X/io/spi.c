@@ -114,8 +114,8 @@ static void _spi1_tx_handler()
 
 static void __attribute__((used)) SPI1_CS_Handler(GPIO_PIN pin, uintptr_t context)
 {
-    //if(!GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN))
-    //    SPI0_INT_Clear();
+    if(GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN) && spi1_txbuf.ptr)
+        SPI0_INT_Set();
 }
 
 void __ISR(_SPI1_FAULT_VECTOR, ipl1SAVEALL) SPI1_FAULT_Handler (void)
