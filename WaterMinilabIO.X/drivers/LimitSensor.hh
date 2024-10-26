@@ -5,23 +5,45 @@
 class LimitSensor
     : public A31301
 {
-    uint16_t limit;
+    int16_t limit[2];
     uint8_t  axis;
+    bool     invert;
+    constexpr static inline int measures = 1;
     
 public:
     
-    inline LimitSensor(I2C &i, uint16_t a, uint8_t ax, uint16_t lim)
+    inline LimitSensor(I2C &i, uint16_t a, uint8_t ax, int16_t liml, int16_t limh, bool inv)
         : A31301(i,a)
-        , limit(lim)
+        , limit{liml,limh}
         , axis(ax)
+        , invert(inv)
     {}
         
-    inline bool operator()()
-    { 
-        result r;
-        read(r);
+    inline int16_t raw()
+    {
+        int acc = 0;
         
-        return abs((&r.x)[axis]) > limit;
+        for(int i = 0; i < measures; ++i)
+        {
+            result r;
+            read(r);
+            acc += (&r.x)[axis];
+            //std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
+        return (int16_t)(acc/measures);
+    }
+        
+    inline int operator()()
+    {
+        const auto v = raw();
+        const auto inv = (invert?-1:1);
+        if (v < limit[0])
+            return (v-limit[0])*inv;
+        if(v > limit[1])
+            return (v-limit[1])*inv;
+        
+        return 0;
+        
     }
 };
 #endif

@@ -31,7 +31,7 @@
 
 long long debug_long0 = -1, debug_long1 = -1;
 
-#define stack_pool_size 10000
+#define stack_pool_size 16384
 static char stack_pool_data[stack_pool_size];
 
 static TX_BYTE_POOL stack_pool;
@@ -46,25 +46,47 @@ static char posix_mempool[POSIX_HEAP_SIZE_IN_BYTES];
 
 extern void _Z4initv();
 
-static TX_THREAD  main_thread;
+
+volatile uint32_t idle_count = 0;
+
+
+static void idle_thread_start()
+{
+    while(true)
+    {
+        idle_count += 1;
+        tx_thread_relinquish();
+    }
+}
+
+static TX_THREAD  main_thread, idle_thread;
 
 void tx_application_define(void *first_unused_memory)
 {
-    char *main_thread_stack = TX_NULL;
-    const size_t main_thread_stack_size = 8192;
+    char *main_thread_stack = TX_NULL, *idle_thread_stack = TX_NULL;
+    const size_t main_thread_stack_size = 8192, idle_thread_stack_size = 1024;
     
     /* Create a byte memory pool from which to allocate the thread stacks.  */
     tx_byte_pool_create(&stack_pool, "stack pool", stack_pool_data, stack_pool_size);
     
     
     /* Allocate the stack for the main thread  */
-    tx_byte_allocate(&stack_pool, (VOID **) &main_thread_stack, main_thread_stack_size, TX_NO_WAIT);
     
+    
+    tx_byte_allocate(&stack_pool, (VOID **) &idle_thread_stack, idle_thread_stack_size, TX_NO_WAIT);
+    if(tx_thread_create(&idle_thread, "idle_thread", idle_thread_start, 0, idle_thread_stack, idle_thread_stack_size, TX_MAX_PRIORITIES-1, TX_MAX_PRIORITIES-1, TX_NO_TIME_SLICE, TX_AUTO_START) != TX_SUCCESS)
+    {
+        while(true)
+            __builtin_software_breakpoint();
+    }
+    
+    tx_byte_allocate(&stack_pool, (VOID **) &main_thread_stack, main_thread_stack_size, TX_NO_WAIT);
     if(tx_thread_create(&main_thread, "main_thread", _Z4initv, 0, main_thread_stack, main_thread_stack_size, 7, 1, TX_NO_TIME_SLICE, TX_AUTO_START) != TX_SUCCESS)
     {
         while(true)
             __builtin_software_breakpoint();
     }
+    
 }
 
 

@@ -35,6 +35,8 @@ namespace process
 		typedef typename TEnv::clock             clock;
 
 		typedef typename clock::time_point       time_point;
+        
+        constexpr static std::chrono::milliseconds resend_interval{TEnv::resend_interval};
 
 
 		static std::mutex               &queue_lock;
@@ -162,7 +164,7 @@ namespace process
 						continue;
 					}
 
-					i.resend_time = clock::now() + std::chrono::milliseconds(400);
+					i.resend_time = clock::now() + resend_interval;
 					if(ns > i.resend_time)
 						ns = i.resend_time;
 

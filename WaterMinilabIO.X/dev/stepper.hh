@@ -1,5 +1,7 @@
 #ifndef DEV_STEPPER_HH
 # define DEV_STEPPER_HH
+# include <mutex>
+# include <condition_variable>
 # include <drivers/TMC2209.h>
 # include <drivers/encoder.h>
 # include <drivers/LimitSensor.hh>
@@ -41,10 +43,10 @@ namespace dev
 
 class stepper
     : public TMC2209
+    , public std::chrono::high_resolution_clock
 {
-    TX_SEMAPHORE sem_index;
-    TX_SEMAPHORE sem_notify;
-    std::mutex   target_index_lk;
+    std::mutex lk;
+    std::condition_variable cv;
     stepper_index_handler &index;
     Encoder *encoder;
     LimitSensor *limit;
@@ -52,14 +54,22 @@ class stepper
     volatile size_t  last_index_count;
     volatile int32_t target_index;
     volatile int32_t current_index;
+    volatile int32_t current_position;
     volatile int32_t current_speed;
-    volatile bool last_dir;
 
     GPIO_PIN     pin_diag;
     size_t       steps_per_rev;
-    size_t       max_rpm;
-    size_t       max_accel;
+    volatile size_t       max_rpm;
+    volatile size_t       max_accel;
+    volatile size_t       homing_retries;
     std::thread *process;
+    volatile bool homing;
+    volatile bool pending;
+    
+    void _resetPosition();
+    
+    bool do_target_approach(std::unique_lock<std::mutex> &ul, time_point &t);
+    bool do_homing(std::unique_lock<std::mutex> &ul, time_point &t);
     
     void process_start();
             
@@ -69,18 +79,18 @@ public:
 
     void init();
     
-    inline void setTargetIndex(int32_t v)
-    {
-        std::unique_lock ul(target_index_lk);
-        target_index = v;
-        tx_semaphore_ceiling_put(&sem_notify,1);
-    }
+    void setTargetIndex(int32_t v);
     
     void setFreewheel(bool v);
     
     int32_t getPosition();
     
     void resetPosition();
+    
+    void setMaxAccel(uint32_t v);
+    void setMaxRpm(uint32_t v);
+    
+    void home();
 };   
 
 }

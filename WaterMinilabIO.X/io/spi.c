@@ -112,9 +112,9 @@ static void _spi1_tx_handler()
     SPI1_CLEAR_TX_INT_FLAG();
 }
 
-static void __attribute__((used)) SPI1_CS_Handler(GPIO_PIN pin, uintptr_t context)
+void SPI1_CS_Handler()
 {
-    if(GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN) && spi1_txbuf.ptr)
+    if(GPIO_PinRead((GPIO_PIN)SPI1_CS_PIN) && spi1_txbuf.ptr && (spi1_txbuf.size-spi1_txbuf.index))
         SPI0_INT_Set();
 }
 
@@ -190,7 +190,6 @@ void SPI1_Initialize ( void )
     
 
     /* Register callback and enable notifications on Chip Select logic level change */
-    (void)GPIO_PinInterruptCallbackRegister(SPI1_CS_PIN, SPI1_CS_Handler, 0U);
     GPIO_PinInterruptEnable(SPI1_CS_PIN);
 
     /* Enable SPI1 RX and Error Interrupts. TX interrupt will be enabled when a SPI write is submitted. */

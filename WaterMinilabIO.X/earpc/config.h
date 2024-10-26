@@ -27,7 +27,9 @@ struct config
 
 	static const cfg_command_id_type cfg_command_id_exception = -4;
 
-	static const uint32_t            cfg_call_timeout         = 3200;
+	static const uint32_t            cfg_call_timeout         = 320;
+    
+	static const uint32_t            cfg_resend_interval      = 40;
 
 	static Tconnection               cfg_connection;
 

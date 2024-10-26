@@ -42,6 +42,8 @@ namespace earpc
 			using allocator = typename TConfig::template cfg_allocator<T>;
 
 			static const uint32_t call_timeout          = TConfig::cfg_call_timeout;
+            
+            static const uint32_t resend_interval          = TConfig::cfg_resend_interval;
 
 			constexpr static connection_type &conn      = TConfig::cfg_connection;
 

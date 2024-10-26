@@ -25,7 +25,7 @@ PCA9536::PCA9536(I2C &i, uint16_t a)
         io::host::log("Failed to initialize PCA9536");
         return;
     }
-    if(!_write(reg_output,0b1111))
+    if(!_write(reg_output,0))
     {
         io::host::log("Failed to initialize PCA9536");
         return;

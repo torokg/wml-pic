@@ -236,13 +236,6 @@ void __ISR(_UART6_TX_VECTOR, ipl1SAVEALL) UART6_TX_Handler (void)
     _tx_thread_context_restore();
 }
 
-void __ISR(_CHANGE_NOTICE_D_VECTOR, ipl1SAVEALL) CHANGE_NOTICE_D_Handler (void)
-{
-    _tx_thread_context_save();
-    CHANGE_NOTICE_D_InterruptHandler();
-    _tx_thread_context_restore();
-}
-
 /// High priority interrupts ///
 
 void __ISR(_TIMER_2_VECTOR, ipl2SRS) TIMER_2_Handler (void)
@@ -256,6 +249,9 @@ void __ISR(_CHANGE_NOTICE_A_VECTOR, ipl2SRS) CHANGE_NOTICE_A_Handler (void)
 
 void __ISR(_CHANGE_NOTICE_C_VECTOR, ipl2SRS) CHANGE_NOTICE_C_Handler (void)
 { CHANGE_NOTICE_C_InterruptHandler(); }
+
+void __ISR(_CHANGE_NOTICE_D_VECTOR, ipl2SRS) CHANGE_NOTICE_D_Handler (void)
+{ CHANGE_NOTICE_D_InterruptHandler(); }
 
 void __ISR(_CHANGE_NOTICE_G_VECTOR, ipl2SRS) CHANGE_NOTICE_G_Handler (void)
 { CHANGE_NOTICE_G_InterruptHandler(); }

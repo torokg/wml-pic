@@ -13,7 +13,7 @@ VNCL4040::init()
         uint8_t cmd[] = {0x0,0b00000001,0b00000000};
         if(!i2c.Write(address, cmd, 3))
         {
-            io::host::log("Failed to disable ALS mode in proximity sensor");
+            //io::host::log("Failed to disable ALS mode in proximity sensor");
             return false;
         }
     }
@@ -23,7 +23,7 @@ VNCL4040::init()
         uint8_t cmd[] = {0x03,0b00000000,0b00001000};
         if(!i2c.Write(address, cmd, 3))
         {
-            io::host::log("Failed to turn on PS mode in proximity sensor");
+            //io::host::log("Failed to turn on PS mode in proximity sensor");
             return false;
         }
     }
@@ -33,7 +33,7 @@ VNCL4040::init()
         uint8_t cmd[] = {0x04,0b01110001,0b00000111};
         if(!i2c.Write(address, cmd, 3))
         {
-            io::host::log("Failed to configure PS mode in proximity sensor");
+            //io::host::log("Failed to configure PS mode in proximity sensor");
             return false;
         }
     }

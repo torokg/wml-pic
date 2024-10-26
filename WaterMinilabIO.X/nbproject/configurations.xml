@@ -201,6 +201,9 @@
         <logicalFolder name="PCA9546" displayName="PCA9546" projectFiles="true">
           <itemPath>drivers/PCA9546/PCA9546.cc</itemPath>
         </logicalFolder>
+        <logicalFolder name="TLA2518" displayName="TLA2518" projectFiles="true">
+          <itemPath>drivers/TLA2518/TLA2518.cc</itemPath>
+        </logicalFolder>
         <logicalFolder name="TLE9201" displayName="TLE9201" projectFiles="true">
           <itemPath>drivers/TLE9201/TLE9201.cc</itemPath>
         </logicalFolder>
@@ -226,6 +229,8 @@
         <itemPath>drivers/encoder.h</itemPath>
         <itemPath>drivers/hpint.cc</itemPath>
         <itemPath>drivers/uart.hh</itemPath>
+        <itemPath>drivers/LimitSensor.hh</itemPath>
+        <itemPath>drivers/TLA2518.h</itemPath>
       </logicalFolder>
       <logicalFolder name="earpc" displayName="earpc" projectFiles="true">
         <logicalFolder name="buffer" displayName="buffer" projectFiles="true">
@@ -258,6 +263,9 @@
           <itemPath>io/host/spi_pkt_slave.hh</itemPath>
         </logicalFolder>
         <itemPath>io/spi.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="MAX31865" displayName="MAX31865" projectFiles="true">
+        <itemPath>drivers/MAX31865/MAX31865.cc</itemPath>
       </logicalFolder>
       <logicalFolder name="net" displayName="net" projectFiles="true">
         <itemPath>net/algorithm.h</itemPath>
@@ -623,8 +631,10 @@
       <itemPath>init.cc</itemPath>
       <itemPath>memory_extra.cc</itemPath>
       <itemPath>../src/third_party/rtos/threadx/posix/time_extra.cc</itemPath>
-      <itemPath>drivers/LimitSensor.hh</itemPath>
       <itemPath>argtypes.hh</itemPath>
+      <itemPath>WML.hh</itemPath>
+      <itemPath>WML.cc</itemPath>
+      <itemPath>drivers/MAX31865.h</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -696,7 +706,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="true"/>
-        <property key="optimization-level" value="-O1"/>
+        <property key="optimization-level" value="-O2"/>
         <property key="place-data-into-section" value="true"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -797,7 +807,7 @@
         <property key="generate-micro-compressed-code" value="false"/>
         <property key="isolate-each-function" value="true"/>
         <property key="make-warnings-into-errors" value="false"/>
-        <property key="optimization-level" value="-O1"/>
+        <property key="optimization-level" value="-O2"/>
         <property key="place-data-into-section" value="false"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
@@ -905,7 +915,6 @@
         <property key="event.recorder.debugger.behavior" value="Running"/>
         <property key="event.recorder.enabled" value="false"/>
         <property key="event.recorder.scvd.files" value=""/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>

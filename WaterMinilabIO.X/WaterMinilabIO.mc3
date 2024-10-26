@@ -3079,7 +3079,7 @@
     &lt;/PowerProfiles&gt;
     &lt;ComponentGraph dnOrder=&quot;2&quot; id=&quot;__ROOTVIEW&quot;&gt;
       &lt;ElementPositions dnOrder=&quot;0&quot;&gt;
-        &lt;ElementPosition dnOrder=&quot;0&quot; id=&quot;HarmonyCore&quot; x=&quot;466&quot; y=&quot;18&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;0&quot; id=&quot;HarmonyCore&quot; x=&quot;465&quot; y=&quot;11&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;1&quot; id=&quot;ThreadX&quot; x=&quot;344&quot; y=&quot;11&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;2&quot; id=&quot;core&quot; x=&quot;20&quot; y=&quot;20&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;3&quot; id=&quot;dfp&quot; x=&quot;120&quot; y=&quot;20&quot;/&gt;
@@ -3090,7 +3090,7 @@
         &lt;ElementPosition dnOrder=&quot;8&quot; id=&quot;ocmp4&quot; x=&quot;937&quot; y=&quot;68&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;9&quot; id=&quot;ocmp5&quot; x=&quot;759&quot; y=&quot;312&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;10&quot; id=&quot;ocmp9&quot; x=&quot;758&quot; y=&quot;349&quot;/&gt;
-        &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;spi1&quot; x=&quot;346&quot; y=&quot;71&quot;/&gt;
+        &lt;ElementPosition dnOrder=&quot;11&quot; id=&quot;spi1&quot; x=&quot;346&quot; y=&quot;72&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;12&quot; id=&quot;spi2&quot; x=&quot;163&quot; y=&quot;200&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;13&quot; id=&quot;spi5&quot; x=&quot;163&quot; y=&quot;261&quot;/&gt;
         &lt;ElementPosition dnOrder=&quot;14&quot; id=&quot;spi6&quot; x=&quot;163&quot; y=&quot;323&quot;/&gt;
@@ -6711,6 +6711,17 @@
 </value>
       </entry>
       <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="BSP_PIN_62_DIR"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
+  &lt;core dnOrder=&quot;0&quot; id=&quot;BSP_PIN_62_DIR&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/core&gt;
+&lt;/core&gt;
+</value>
+      </entry>
+      <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="BSP_PIN_62_FUNCTION_NAME"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;BSP_PIN_62_FUNCTION_NAME&quot;&gt;
@@ -6727,6 +6738,17 @@
   &lt;core dnOrder=&quot;0&quot; id=&quot;BSP_PIN_62_FUNCTION_TYPE&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
       &lt;User dnOrder=&quot;0&quot; value=&quot;SDO6&quot;/&gt;
+    &lt;/Values&gt;
+  &lt;/core&gt;
+&lt;/core&gt;
+</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="core" name="BSP_PIN_62_LAT"/>
+         <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
+  &lt;core dnOrder=&quot;0&quot; id=&quot;BSP_PIN_62_LAT&quot;&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;High&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -11357,7 +11379,7 @@
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;core&gt;
   &lt;core dnOrder=&quot;0&quot; id=&quot;SYS_PORT_B_LAT&quot;&gt;
     &lt;Values dnOrder=&quot;0&quot;&gt;
-      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;4400&quot;/&gt;
+      &lt;Dynamic dnOrder=&quot;0&quot; id=&quot;core&quot; value=&quot;37168&quot;/&gt;
     &lt;/Values&gt;
   &lt;/core&gt;
 &lt;/core&gt;
@@ -17010,7 +17032,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="spi6" name="SPI_DUMMY_DATA"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;spi6&gt;
   &lt;spi6 dnOrder=&quot;0&quot; id=&quot;SPI_DUMMY_DATA&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;0&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/spi6&gt;
 &lt;/spi6&gt;
 </value>
@@ -19816,7 +19840,9 @@
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="uart6" name="BAUD_RATE"/>
          <value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;uart6&gt;
   &lt;uart6 dnOrder=&quot;0&quot; id=&quot;BAUD_RATE&quot;&gt;
-    &lt;Values dnOrder=&quot;0&quot;/&gt;
+    &lt;Values dnOrder=&quot;0&quot;&gt;
+      &lt;User dnOrder=&quot;0&quot; value=&quot;115200&quot;/&gt;
+    &lt;/Values&gt;
   &lt;/uart6&gt;
 &lt;/uart6&gt;
 </value>
@@ -20212,7 +20238,7 @@
    <generatedFileHashHistoryMap class="java.util.TreeMap">
       <entry>
          <file>../src/config/default/definitions.h</file>
-         <hash>e9a9f31f175237c34d7d6bbbdebad06efab8b19d7ca918a0970a50caf90c09fb</hash>
+         <hash>9ea585540a0c9aea06519112f63cb6d42174a6381d8340d75f1854a06719a708</hash>
       </entry>
       <entry>
          <file>../src/config/default/device.h</file>
@@ -20224,15 +20250,15 @@
       </entry>
       <entry>
          <file>../src/config/default/initialization.c</file>
-         <hash>5e83e32f6e0058ec73b1d59364b6475495f1c9aea90fbbd02438bec3969fada8</hash>
+         <hash>6acfbd9a02b87f6bee2f18716fd0363f18d965861ce7389c0776c4678c653daf</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.c</file>
-         <hash>3a32c48691fdc88af747de745912eba1a3b1b03bbff76ab85055cdaff54d7c1f</hash>
+         <hash>a53e056b03e7e1dbfe08ebca132286b5ab9cb775a2f15ccf5dd87547d2942beb</hash>
       </entry>
       <entry>
          <file>../src/config/default/interrupts.h</file>
-         <hash>15bdda8f2ecce60487d98f757a1ba3c1fac4dbf3b365e7c28ae8abf875c64954</hash>
+         <hash>558bb3d6a64aa99a3e324ebb0c1c5b4ed4ee65c3e2babee3e26a441b2ab24b75</hash>
       </entry>
       <entry>
          <file>../src/config/default/p32MZ2048EFM144.ld</file>
@@ -20256,7 +20282,7 @@
       </entry>
       <entry>
          <file>../src/config/default/peripheral/gpio/plib_gpio.c</file>
-         <hash>2f14602859d48fd347d9a9cc9e69e1970f9ef33439a1b4bc3c6486404973de6c</hash>
+         <hash>062d9c589c9799c6a6cf450cb75522e7e9d09555d1a1ef4bc48344ede9e62ba4</hash>
       </entry>
       <entry>
          <file>../src/config/default/peripheral/gpio/plib_gpio.h</file>
@@ -20344,7 +20370,7 @@
       </entry>
       <entry>
          <file>../src/config/default/peripheral/spi/spi_master/plib_spi6_master.c</file>
-         <hash>e40d185da3698fd512be2b5f10f0fed1dc9b1c9d12f9872480c6749f42b22f8f</hash>
+         <hash>4167daf802ef8fdfb8e6ea82ae72266a429cdfefe352b37d5ca62500c741c4b8</hash>
       </entry>
       <entry>
          <file>../src/config/default/peripheral/spi/spi_master/plib_spi6_master.h</file>

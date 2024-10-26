@@ -15,7 +15,8 @@ MCP23S17::MCP23S17(SPI &s, GPIO_PIN cs, GPIO_PIN rst)
 	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	static uint8_t all_output[4] = {0b01000000,0x0,0b00000000,0b00000000};
-	
+    
+    std::unique_lock ul(spi.mutex);	
 	GPIO_PinWrite(pin_cs,0);
 	spi.Write(all_output,sizeof(all_output));
 	GPIO_PinWrite(pin_cs,1);

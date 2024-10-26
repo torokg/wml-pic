@@ -276,7 +276,7 @@ bool SPI6_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, siz
             }
             else if (spi6Obj.dummySize > 0U)
             {
-                SPI6BUF = (uint32_t)(0xffU);
+                SPI6BUF = (uint32_t)(0x0U);
                 spi6Obj.dummySize--;
             }
             else
@@ -298,7 +298,7 @@ bool SPI6_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, siz
             }
             else if (spi6Obj.dummySize > 0U)
             {
-                SPI6BUF = (uint16_t)(0xffU);
+                SPI6BUF = (uint16_t)(0x0U);
                 spi6Obj.dummySize--;
             }
             else
@@ -315,7 +315,7 @@ bool SPI6_WriteRead (void* pTransmitData, size_t txSize, void* pReceiveData, siz
             }
             else if (spi6Obj.dummySize > 0U)
             {
-                SPI6BUF = (uint8_t)(0xffU);
+                SPI6BUF = (uint8_t)(0x0U);
                 spi6Obj.dummySize--;
             }
             else
@@ -421,7 +421,7 @@ void __attribute__((used)) SPI6_RX_InterruptHandler (void)
                 }
                 else if (spi6Obj.dummySize > 0U)
                 {
-                    SPI6BUF = (uint32_t)(0xffU);
+                    SPI6BUF = (uint32_t)(0x0U);
                     spi6Obj.dummySize--;
                 }
                 else
@@ -438,7 +438,7 @@ void __attribute__((used)) SPI6_RX_InterruptHandler (void)
                 }
                 else if (spi6Obj.dummySize > 0U)
                 {
-                    SPI6BUF = (uint16_t)(0xffU);
+                    SPI6BUF = (uint16_t)(0x0U);
                     spi6Obj.dummySize--;
                 }
                 else
@@ -455,7 +455,7 @@ void __attribute__((used)) SPI6_RX_InterruptHandler (void)
                 }
                 else if (spi6Obj.dummySize > 0U)
                 {
-                    SPI6BUF = (uint8_t)(0xffU);
+                    SPI6BUF = (uint8_t)(0x0U);
                     spi6Obj.dummySize--;
                 }
                 else

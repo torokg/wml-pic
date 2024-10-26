@@ -76,7 +76,7 @@ void GPIO_Initialize ( void )
     PORTA;
     IEC3SET = _IEC3_CNAIE_MASK;
     /* PORTB Initialization */
-    LATB = 0x1130U; /* Initial Latch Value */
+    LATB = 0x9130U; /* Initial Latch Value */
     TRISBCLR = 0x1938U; /* Direction Control */
     ANSELBCLR = 0xfff8U; /* Digital Mode Enable */
     /* PORTC Initialization */
@@ -516,32 +516,7 @@ bool GPIO_PinInterruptCallbackRegister(
     It is an internal function called from ISR, user should not call it directly.
 */
     
-void __attribute__((used)) CHANGE_NOTICE_D_InterruptHandler(void)
-{
-    uint8_t i;
-    uint32_t status;
-    GPIO_PIN pin;
-    uintptr_t context;
 
-    status  = CNSTATD;
-    status &= CNEND;
-
-    PORTD;
-    IFS3CLR = _IFS3_CNDIF_MASK;
-
-    /* Check pending events and call callback if registered */
-    for(i = 3; i < 6; i++)
-    {
-        pin = portPinCbObj[i].pin;
-
-        if((portPinCbObj[i].callback != NULL) && ((status & ((uint32_t)1U << (pin & 0xFU))) != 0U))
-        {
-            context = portPinCbObj[i].context;
-
-            portPinCbObj[i].callback (pin, context);
-        }
-    }
-}
 
 /*******************************************************************************
  End of File
