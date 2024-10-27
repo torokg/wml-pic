@@ -31,6 +31,7 @@ stepper::stepper(HardwareSerial &serial, TMC2209::SerialAddress address, stepper
         , max_accel(macc)
         , homing(false)
         , pending(false)
+        , departed(false)
 {
 
 //    (void)GPIO_PinInterruptCallbackRegister(pin_index, &static_index_handler, reinterpret_cast<uintptr_t>(this));
@@ -65,6 +66,7 @@ void stepper::setFreewheel(bool v)
     {
         std::unique_lock ul(lk);
         target_index = getPosition();
+        current_speed = 0;
         moveAtVelocity(0);
         enable();
     }
@@ -77,17 +79,19 @@ void stepper::setTargetIndex(int32_t v)
     std::unique_lock ul(lk);
     if(homing)
         return;
-    pending = true;
     target_index = v;
+    pending = true;
+
     cv.notify_all();
 }
 
 void stepper::home()
 {
     std::unique_lock ul(lk);
-    pending = true;
     homing = true;
     homing_retries = 0;
+    pending = true;
+
     cv.notify_all();
 }
 
@@ -132,24 +136,24 @@ bool stepper::do_homing(std::unique_lock<std::mutex> &ul, stepper::time_point &t
     if(v == 0)
     {
         _resetPosition();
-        if(++homing_retries >= 100)
+        if(++homing_retries >= 400)
         {
             homing = false;
             return true;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(40));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         return false;
     }
+    
+    
+    if(abs(v) > 250)
+        target_index = (v/abs(v))*30;
+    else
+        target_index = (v/abs(v));
     
     index.count = last_index_count = current_index = 0;
     if(encoder)
         encoder->position = 0;
-    
-    if(abs(v) > 100)
-        target_index = (v/abs(v))*80;
-    else
-        target_index = v/abs(v);
-    
     do_target_approach(ul,t);
     
     return false;
@@ -187,6 +191,8 @@ bool stepper::do_target_approach(std::unique_lock<std::mutex> &ul, stepper::time
             {
                 const double dtsec = double(dt.count())*decltype(dt)::period::num/decltype(dt)::period::den;
                 measured_velocity = float((double(delta_i)*256/10)/dtsec);
+                //if(measured_velocity < current_speed/2)
+                //    current_speed /= 2;
             }
             int sgn = (dist < 0) ? -1 : 1;
             const float suggested_velocity = abs(float(dist)*256/10/(current_speed/2)*mxacc);
@@ -199,20 +205,17 @@ bool stepper::do_target_approach(std::unique_lock<std::mutex> &ul, stepper::time
                 cv.wait_until(ul, t0+std::chrono::milliseconds(10));
                 return false;
             }
-
-            else
+           
+            if(!current_speed)
             {
-                if(!current_speed)
-                {
-                    if(!new_speed)
-                        current_speed = (int32_t)(float(dist)*256/10*100);
-                    else
-                        current_speed = new_speed;
-                    moveAtVelocity(current_speed);
-                }
-                cv.wait_until(ul, t0+std::chrono::milliseconds(1));
-                return false;
+                if(!new_speed)
+                    current_speed = (int32_t)(float(dist)*256/10*100);
+                else
+                    current_speed = new_speed;
+                moveAtVelocity(current_speed);
             }
+            cv.wait_until(ul, t0+std::chrono::milliseconds(1));
+            return false;
         }
     }
     else
@@ -277,15 +280,19 @@ void stepper::process_start()
  
         current_speed = 0;
         moveAtVelocity(0);
-        if(pending)
+        if(pending && departed)
         {
             io::host::log("Arrived at position ",current_index); 
+            departed = false;
             pending = false;
             finish_callback();
         }
         cv.wait_for(ul,std::chrono::milliseconds(20));
         if(pending)
+        {
+            departed = true;
             io::host::log("Departing from position ",current_index); 
+        }
     }
 }
 

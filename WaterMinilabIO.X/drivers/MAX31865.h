@@ -22,6 +22,6 @@ public:
     
     MAX31865(SPI &spi, GPIO_PIN pin_cs);
     
-    bool read(float &result);
+    bool read(uint16_t &result);
 };
 #endif

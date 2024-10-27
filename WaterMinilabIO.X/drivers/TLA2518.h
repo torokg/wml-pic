@@ -1,6 +1,7 @@
 #ifndef DRIVERS_TLA2518_H
 # define DRIVERS_TLA2518_H
 # include <cstddef>
+# include <cstdint>
 # include <mutex>
 # include <drivers/spi.hh>
 # include <io/host/service.hh>
@@ -43,10 +44,12 @@ public:
     
     int system_status();
     
+    bool data_config(uint8_t v);
+    
     bool channel_select(uint8_t ch);
     
     int channel_select();
     
-    //bool read(uint8_t channel, )
+    bool read(uint16_t &v);
 };
 #endif

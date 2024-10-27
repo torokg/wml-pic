@@ -72,7 +72,29 @@ int
 TLA2518::channel_select()
 { 
     uint8_t rv = 0;
-    if(!this->_read(reg_channel_sel,rv))
+    if(!_read(reg_channel_sel,rv))
         return -1;
     return rv;
+}
+
+bool 
+TLA2518::data_config(uint8_t v)
+{ return _write(reg_data_cfg,v); }
+
+bool
+TLA2518::read(uint16_t &rv)
+{
+    union
+    {
+        uint32_t v;
+        uint8_t  a[3];
+    } rxbuf;
+    
+    uint8_t txbuf[3] = {0,0,0};
+    
+    if(!spi.WriteRead(txbuf,3,rxbuf.a,3))
+        return false;
+    
+    rv = (uint16_t)rxbuf.v&0x7fff;
+    return true;
 }

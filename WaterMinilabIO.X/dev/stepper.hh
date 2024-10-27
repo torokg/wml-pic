@@ -65,6 +65,7 @@ class stepper
     std::thread *process;
     volatile bool homing;
     volatile bool pending;
+    volatile bool departed;
     
     void _resetPosition();
     

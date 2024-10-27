@@ -24,7 +24,7 @@ public:
         , pin_a(a)
         , pin_b(b)
         , pin_z(z)
-        , state{0,0,0,0}
+        , state{0xff,0xff,0xff,0xff}
         , statep(0)
         , position(0)
         , intpin(ip)

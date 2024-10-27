@@ -18,6 +18,12 @@
 # include <dev/bdc.hh>
 struct WML
 {
+    std::array<std::mutex,10> stepper_finish_lk;
+    std::array<volatile uint32_t,10> stepper_finish_counter;
+    void stepper_finish_callback(uint8_t stepper);
+    
+public:
+    
     std::array<HardwareSerial,6> uart;
     std::array<oc_type,5>        oc;
     std::array<SPI,3>            spi;
@@ -35,7 +41,6 @@ struct WML
     std::array<dev::valve, 12>   valve;
     std::array<dev::bdc, 4>      bdc;
     std::array<dev::stepper,10>  stepper;
-    
 
     WML();
 };

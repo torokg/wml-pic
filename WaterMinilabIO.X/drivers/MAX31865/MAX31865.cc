@@ -34,7 +34,7 @@ MAX31865::MAX31865(SPI &s, GPIO_PIN cs)
 }
     
 bool
-MAX31865::read(float &result)
+MAX31865::read(uint16_t &result)
 {
     union 
     {   uint16_t v;
@@ -47,7 +47,6 @@ MAX31865::read(float &result)
     if(!_read(reg_rtd_msb,v.a[1]))
         return false;
     
-    io::host::service::log("ADC CODE: ",std::hex,v.v);
-    result = float(v.v>>1)/32-256;
+    result = v.v&0x7fff;
     return true;
 }

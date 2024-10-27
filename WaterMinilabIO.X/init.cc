@@ -254,6 +254,34 @@ void init()
         r.respond(rv);
     });
     
+    //get temp sensor
+    io::host::default_earpc::set_command<uint16_t,bool>(202,[&wml](auto r) {
+        uint16_t rv = 0;
+        
+        if(wml.temp_sensor.read(rv))
+            r.respond(rv);
+        else
+            r.respond(0);
+    });
+    
+    
+    //get ADC channel
+    io::host::default_earpc::set_command<float,uint8_t>(203,[&wml](auto r) {
+        const auto item = r.value();
+        if(item > 7)
+        {
+            r.respond(std::numeric_limits<float>::quiet_NaN());
+            return;
+        }
+        
+        uint16_t rv = 0;
+        
+        if(wml.adc.read(rv))
+            r.respond(float(rv)/65535);
+        else
+            r.respond(std::numeric_limits<float>::quiet_NaN());
+    });
+    
     io::host::log("Starting loop");
     while(true)
     {
@@ -275,7 +303,7 @@ void init()
             //std::this_thread::sleep_for(std::chrono::milliseconds(20));
         //}
         
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
         //io::host::log("ADC system status: ",std::hex,(int)wml.adc.system_status());
         
@@ -286,7 +314,21 @@ void init()
             io::host::log("Temperature read failed ");
         */
         //wml.adc.channel_select(2);
-        
-        //io::host::log("ADC system status: ",std::hex,(int)wml.adc.channel_select());
+        /*wml.adc.data_config(128);
+        for(int i = 3; i < 8; ++i)
+        {
+            wml.adc.channel_select(i);
+
+            for(int j = 0; j < 3; ++j)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+                uint16_t r = 0;
+                if(wml.adc.read(r))
+                    io::host::log("ADC ",i," read: ",std::hex,r);
+                else
+                    io::host::log("ADC ",i," read failed");
+            }
+        }*/
     }
 }

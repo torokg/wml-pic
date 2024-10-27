@@ -38,4 +38,17 @@ public:
     bool WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* rdata, size_t rlength)
     { return _write_read(address,wdata,wlength,rdata,rlength); }
 };
+
+class DummyI2C
+    : public I2C
+{
+    bool Read(uint16_t address, uint8_t* rdata, size_t rlength)
+    { return false; }
+    
+    bool Write(uint16_t address, uint8_t* wdata, size_t wlength)
+    { return false; }
+    
+    bool WriteRead(uint16_t address, uint8_t* wdata, size_t wlength, uint8_t* rdata, size_t rlength)
+    { return false; }
+};
 #endif
