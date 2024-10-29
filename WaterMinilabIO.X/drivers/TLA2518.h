@@ -46,6 +46,14 @@ public:
     
     bool data_config(uint8_t v);
     
+    bool general_config(uint8_t v);
+    
+    bool sequence_config(uint8_t v);
+    
+    bool osr_config(uint8_t v);
+    
+    bool opmode_config(uint8_t v);
+    
     bool channel_select(uint8_t ch);
     
     int channel_select();

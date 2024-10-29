@@ -274,6 +274,20 @@ void init()
             return;
         }
         
+        if(!wml.adc.channel_select(item))
+        {
+            r.respond(std::numeric_limits<float>::quiet_NaN());
+            return;
+        }
+        
+        /*if(!wml.adc.sequence_config(0b00010000))
+        {
+            r.respond(std::numeric_limits<float>::quiet_NaN());
+            return;
+        }*/
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        
         uint16_t rv = 0;
         
         if(wml.adc.read(rv))
@@ -281,6 +295,12 @@ void init()
         else
             r.respond(std::numeric_limits<float>::quiet_NaN());
     });
+    
+    
+    wml.adc.general_config(0b00000100);
+    wml.adc.data_config(0b0001000);
+    wml.adc.opmode_config(0b00001000);
+    wml.adc.osr_config(0b00000111);
     
     io::host::log("Starting loop");
     while(true)

@@ -98,11 +98,11 @@ WML::WML()
        , dev::bdc{spi[0],SPI2_CS2_PIN}
        , dev::bdc{spi[0],SPI2_CS3_PIN}
        }
-    , stepper                                                                                                                                                                // Irun Ihold  SpR,   RPM  Acc
+    , stepper                                                                                                                                                                            // Irun Ihold  SpR,   RPM  Acc
        { dev::stepper{uart[2], TMC2209::SERIAL_ADDRESS_0, stepper_index[0], &encoders[0], &limit_sensor[0], std::bind(&WML::stepper_finish_callback,this,0), STX_ENABLE_PIN, STX_DIAG_PIN, 50UL,  5UL, 200UL, 500, 400}
-       , dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, stepper_index[1], &encoders[3], &limit_sensor[1], std::bind(&WML::stepper_finish_callback,this,1), STY_ENABLE_PIN, STY_DIAG_PIN, 50UL,  5UL, 200UL, 500, 400}   // limit sensor: ; home: 
-       , dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, stepper_index[2], &encoders[2], &limit_sensor[2], std::bind(&WML::stepper_finish_callback,this,2), STZ_ENABLE_PIN, STZ_DIAG_PIN, 50UL,  5UL, 200UL, 600, 500}   // limit sensor: 2; home: z < -620
-       , dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, stepper_index[3],            0,                0, std::bind(&WML::stepper_finish_callback,this,3), STC_ENABLE_PIN, STC_DIAG_PIN, 60UL,  0UL, 200UL, 300, 50}
+       , dev::stepper{uart[0], TMC2209::SERIAL_ADDRESS_0, stepper_index[1], &encoders[3], &limit_sensor[1], std::bind(&WML::stepper_finish_callback,this,1), STY_ENABLE_PIN, STY_DIAG_PIN, 50UL,  5UL, 200UL, 500, 400}
+       , dev::stepper{uart[3], TMC2209::SERIAL_ADDRESS_0, stepper_index[2], &encoders[2], &limit_sensor[2], std::bind(&WML::stepper_finish_callback,this,2), STZ_ENABLE_PIN, STZ_DIAG_PIN, 50UL,  5UL, 200UL, 600, 500}
+       , dev::stepper{uart[1], TMC2209::SERIAL_ADDRESS_0, stepper_index[3],            0,                0, std::bind(&WML::stepper_finish_callback,this,3), STC_ENABLE_PIN, STC_DIAG_PIN, 100UL, 0UL, 200UL,  25, 100}
        , dev::stepper{uart[5], TMC2209::SERIAL_ADDRESS_0, stepper_index[4],            0,                0, std::bind(&WML::stepper_finish_callback,this,4), ST4_ENABLE_PIN, ST4_DIAG_PIN, 40UL, 40UL, 200UL, 300, 400}
        , dev::stepper{uart[5], TMC2209::SERIAL_ADDRESS_2, stepper_index[5],            0,                0, std::bind(&WML::stepper_finish_callback,this,5), ST5_ENABLE_PIN, ST5_DIAG_PIN, 40UL, 40UL, 200UL, 300, 400}
        , dev::stepper{uart[5], TMC2209::SERIAL_ADDRESS_1, stepper_index[6],            0,                0, std::bind(&WML::stepper_finish_callback,this,6), ST6_ENABLE_PIN, ST6_DIAG_PIN, 40UL, 40UL, 200UL, 300, 400}

@@ -81,20 +81,37 @@ bool
 TLA2518::data_config(uint8_t v)
 { return _write(reg_data_cfg,v); }
 
+bool 
+TLA2518::general_config(uint8_t v)
+{ return _write(reg_general_cfg,v); }
+
+bool
+TLA2518::sequence_config(uint8_t v)
+{ return _write(reg_sequence_cfg,v); }
+
+bool
+TLA2518::osr_config(uint8_t v)
+{ return _write(reg_osr_cfg,v); }
+
+bool
+TLA2518::opmode_config(uint8_t v)
+{ return _write(reg_opmode_cfg,v); }
+
 bool
 TLA2518::read(uint16_t &rv)
 {
-    union
-    {
-        uint32_t v;
-        uint8_t  a[3];
-    } rxbuf;
+    uint16_t rxbuf;
     
-    uint8_t txbuf[3] = {0,0,0};
+    uint8_t txbuf[3] = {0,0};
     
-    if(!spi.WriteRead(txbuf,3,rxbuf.a,3))
+    std::unique_lock ul(spi.mutex);
+    GPIO_PinClear(pin_cs);
+    bool r = spi.WriteRead(txbuf,2,&rxbuf,2);
+    GPIO_PinSet(pin_cs);
+    ul.unlock();
+    if(!r)
         return false;
     
-    rv = (uint16_t)rxbuf.v&0x7fff;
+    rv = rxbuf;
     return true;
 }

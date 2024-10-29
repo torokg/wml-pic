@@ -282,7 +282,7 @@ void stepper::process_start()
         moveAtVelocity(0);
         if(pending && departed)
         {
-            io::host::log("Arrived at position ",current_index); 
+            //io::host::log("Arrived at position ",current_index); 
             departed = false;
             pending = false;
             finish_callback();
@@ -291,7 +291,7 @@ void stepper::process_start()
         if(pending)
         {
             departed = true;
-            io::host::log("Departing from position ",current_index); 
+            //io::host::log("Departing from position ",current_index); 
         }
     }
 }

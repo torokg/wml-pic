@@ -12,8 +12,7 @@ class Encoder
 
 public:
     
-    std::array<volatile uint8_t,4> state;
-    volatile unsigned statep;
+    volatile uint8_t prev_state;
     
     volatile int32_t position;
     const int32_t direction;
@@ -24,8 +23,7 @@ public:
         , pin_a(a)
         , pin_b(b)
         , pin_z(z)
-        , state{0xff,0xff,0xff,0xff}
-        , statep(0)
+        , prev_state{0xff}
         , position(0)
         , intpin(ip)
         , direction(dir)

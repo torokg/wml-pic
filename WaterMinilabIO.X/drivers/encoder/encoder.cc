@@ -7,12 +7,11 @@ Encoder::notify()
     uint8_t r =
         (GPIO_PinRead(pin_a)?1:0) +
         (GPIO_PinRead(pin_b)?2:0);
-        //(GPIO_PinRead(pin_z)?4:0);
 
-    const uint8_t prev = state[statep];
+    const uint8_t prev = prev_state;
     if(prev == r)
         return;
-
+    prev_state = r;
 //    if(intpin)
 //    {
     if(((prev == 0) && (r == 3)) || ((prev == 3) && (r == 0))  || ((prev == 2) && (r == 0))  || ((prev == 1) && (r == 3)))
@@ -33,10 +32,6 @@ Encoder::notify()
         }
     }
 #endif
-    if(++statep > 3)
-        statep = 0;
-
-    state[statep] = r;
 }
 
 std::array<Encoder,4> encoders = {
