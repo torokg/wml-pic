@@ -187,13 +187,13 @@ void init()
     });
     
     //set servo to angle
-    io::host::default_earpc::set_command<bool,value_set_t<float> >(110,[&wml](auto r) {
+    io::host::default_earpc::set_command<bool,value_set_t<angular_motion_t> >(110,[&wml](auto r) {
         auto x = r.value();
         if(x.item >= wml.servo.size())
             r.respond(false);
         else
         {
-            wml.servo[x.item].setAngle(x.value);
+            wml.servo[x.item].setAngle(x.value.angle,std::chrono::milliseconds(x.value.duration));
             r.respond(true);
         }
     });

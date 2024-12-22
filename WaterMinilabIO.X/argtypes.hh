@@ -8,6 +8,12 @@ struct value_set_t
     uint8_t item;
 };
 
+struct angular_motion_t
+{
+    float angle;
+    uint32_t duration;
+};
+
 struct position_t
 {
     int32_t x;

@@ -163,8 +163,7 @@ bool stepper::do_target_approach(std::unique_lock<std::mutex> &ul, stepper::time
 {
     const auto t0 = now();
     const auto dt = t0-t;
-    t = t0;
-
+    
     const size_t
         ic = index.count,
         lic = last_index_count,
@@ -191,8 +190,8 @@ bool stepper::do_target_approach(std::unique_lock<std::mutex> &ul, stepper::time
             {
                 const double dtsec = double(dt.count())*decltype(dt)::period::num/decltype(dt)::period::den;
                 measured_velocity = float((double(delta_i)*256/10)/dtsec);
-                //if(measured_velocity < current_speed/2)
-                //    current_speed /= 2;
+                if((abs(current_speed) > 1.7*abs(measured_velocity)) || ((current_speed > 0) != (measured_velocity > 0)))
+                    current_speed = measured_velocity;
             }
             int sgn = (dist < 0) ? -1 : 1;
             const float suggested_velocity = abs(float(dist)*256/10/(current_speed/2)*mxacc);
@@ -202,6 +201,7 @@ bool stepper::do_target_approach(std::unique_lock<std::mutex> &ul, stepper::time
             {
                 current_speed = new_speed;
                 moveAtVelocity(current_speed);
+                t = now();
                 cv.wait_until(ul, t0+std::chrono::milliseconds(10));
                 return false;
             }
@@ -263,7 +263,7 @@ void stepper::process_start()
         encoder->enable();
     moveAtVelocity(0);
     
-    auto t = std::chrono::high_resolution_clock::now();
+    auto t = now();
     while(true)
     {
         if(homing)
